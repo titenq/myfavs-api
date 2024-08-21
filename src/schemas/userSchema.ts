@@ -15,7 +15,7 @@ const userResponseSchema = z.object({
   createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
 });
 
-const authRegisterSchema = {
+const userCreateSchema = {
   summary: 'Criar usuário',
   tags: ['Usuários'],
   body: userSchema
@@ -35,7 +35,7 @@ const authRegisterSchema = {
   }
 };
 
-const authLoginSchema = {
+const userGetByEmailSchema = {
   summary: 'Buscar usuário por e-mail',
   tags: ['Usuários'],
   params: z.object({
@@ -61,6 +61,6 @@ const authLoginSchema = {
 };
 
 export {
-  authRegisterSchema,
-  authLoginSchema
+  userCreateSchema,
+  userGetByEmailSchema
 };

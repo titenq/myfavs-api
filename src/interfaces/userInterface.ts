@@ -6,10 +6,6 @@ export interface IUser {
   picture?: string | null;
 }
 
-export interface IUserHeaders {
-  api_key: string;
-}
-
 export interface IUserResponse {
   _id: Types.ObjectId;
   name: string;

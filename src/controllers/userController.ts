@@ -2,29 +2,15 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 
 import userService from '../services/userService';
 import errorHandler from '../helpers/errorHandler';
-import { IUser, IUserHeaders } from '../interfaces/userInterface';
+import { IUser } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 
 export const createUserController = async (
-  request: FastifyRequest<{ Body: IUser, Headers: IUserHeaders }>,
+  request: FastifyRequest<{ Body: IUser }>,
   reply: FastifyReply
 ) => {
   try {
-    const { name, email, picture } = request.body;
-    const { api_key } = request.headers;
-    const { API_KEY } = process.env;
-
-    if (api_key !== API_KEY) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'api_key inválida',
-        statusCode: 401,
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
+    const { name, email } = request.body;
 
     const userExists = await userService.getUserByEmail(email);
 
@@ -32,7 +18,7 @@ export const createUserController = async (
       const errorMessage: IGenericError = {
         error: true,
         message: 'E-mail já cadastrado',
-        statusCode: 409,
+        statusCode: 409
       };
 
       errorHandler(errorMessage, request, reply);
@@ -42,8 +28,7 @@ export const createUserController = async (
 
     const user = await userService.createUser({
       name,
-      email,
-      picture,
+      email
     });
 
     reply.status(200).send(user);
