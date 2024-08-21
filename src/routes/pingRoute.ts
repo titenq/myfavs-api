@@ -1,6 +1,8 @@
-import { pingController } from '../controllers/pingController.js';
+import { FastifyInstance } from 'fastify';
 
-const pingRoute = async fastify => {
+import { pingController } from '../controllers/pingController';
+
+const pingRoute = async (fastify: FastifyInstance) => {
   fastify.get('/ping',
     { schema: { hide: true } },
     pingController

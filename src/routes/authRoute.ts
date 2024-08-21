@@ -1,7 +1,9 @@
-import { authLoginController, authRegisterController } from '../controllers/authController.js';
-import { authLoginSchema, authRegisterSchema } from '../schemas/authSchema.js';
+import { FastifyInstance } from 'fastify';
 
-const authRoute = async fastify => {
+import { authLoginController, authRegisterController } from '../controllers/authController';
+import { authLoginSchema, authRegisterSchema } from '../schemas/authSchema';
+
+const authRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider()
     .post('/auth/register',
       { schema: authRegisterSchema },

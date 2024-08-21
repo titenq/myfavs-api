@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import apiBaseUrl from './apiBaseUrl.js';
+import apiBaseUrl from './apiBaseUrl';
 
 const pingEndpoint = () => {
   setInterval(async () => {
@@ -11,7 +11,7 @@ const pingEndpoint = () => {
     } catch (error) {
       console.error('Erro ao fazer ping:', error);
     }
-  }, 840000); // 14 minutos
+  }, /* 5000)// */840000); // 14 minutos
 };
 
 export default pingEndpoint;

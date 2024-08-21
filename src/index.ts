@@ -33,7 +33,7 @@ app.register(fastifyCors, {
 });
 
 app.register(fastifyStatic, {
-  root: resolve('..', '..', 'uploads'),
+  root: resolve(process.cwd(), 'uploads'),
   prefix: '/uploads/'
 });
 
