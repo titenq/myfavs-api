@@ -17,7 +17,7 @@ const userResponseSchema = z.object({
 
 const userCreateSchema = {
   summary: 'Criar usuário',
-  tags: ['Usuários'],
+  tags: ['user'],
   body: userSchema
     .describe(`<pre><code><b>*name:</b> string
 <b>*email:</b> string
@@ -37,7 +37,7 @@ const userCreateSchema = {
 
 const userGetByEmailSchema = {
   summary: 'Buscar usuário por e-mail',
-  tags: ['Usuários'],
+  tags: ['user'],
   params: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
       .describe('<pre><code><b>*email:</b> string</code></pre>')
