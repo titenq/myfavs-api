@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 
 import userService from '../services/userService';
 import errorHandler from '../helpers/errorHandler';
-import { IUser } from '../interfaces/userInterface';
+import { IUser, IUserResponse } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 
 export const createUserController = async (
@@ -12,31 +12,21 @@ export const createUserController = async (
   try {
     const { name, email } = request.body;
 
-    const userExists = await userService.getUserByEmail(email);
-
-    if (userExists) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'E-mail já cadastrado',
-        statusCode: 409
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const user = await userService.createUser({
+    const response: IUserResponse | IGenericError = await userService.createUser({
       name,
       email
     });
 
-    reply.status(200).send(user);
+    if ('error' in response) {
+      return errorHandler(response, request, reply);
+    }
+
+    reply.status(200).send(response);
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
       message: 'Erro ao criar usuário',
-      statusCode: 500,
+      statusCode: 500
     };
 
     errorHandler(errorMessage, request, reply);

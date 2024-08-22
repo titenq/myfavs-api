@@ -5,6 +5,18 @@ import { IGenericError } from '../interfaces/errorInterface';
 const userService = {
   createUser: async (user: IUser) => {
     try {
+      const userExists = await userService.getUserByEmail(user?.email);
+
+      if (userExists) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'E-mail já cadastrado',
+          statusCode: 409
+        };
+
+        return errorMessage;
+      }
+      
       const userCreated: IUserResponse = await UserModel.create(user);
 
       return userCreated;

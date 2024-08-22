@@ -31,7 +31,8 @@ const authRegisterSchema = {
 <b>picture:</b> string
 <b>*createdAt:</b> Date
 </code></pre>`),
-    400: errorSchema
+    400: errorSchema,
+    409: errorSchema
   }
 };
 
