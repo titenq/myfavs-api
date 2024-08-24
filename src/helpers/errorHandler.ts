@@ -1,11 +1,13 @@
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
 
-const errorHandler = (error, request, reply) => {
+const errorHandler = (error: any, request: FastifyRequest, reply: FastifyReply) => {
+  console.log(error.issues)
   if (error instanceof ZodError || error?.details?.issues) {
     reply.status(400).send({
       statusCode: 400,
       error: 'Bad Request',
-      issues: error instanceof ZodError ? error.issues : error.details.issues,
+      issues: error instanceof ZodError ? error.issues : error.details.issues
     });
 
     return;

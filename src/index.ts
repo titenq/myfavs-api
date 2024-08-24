@@ -19,6 +19,10 @@ const { PORT } = process.env;
 
 const app = fastify();
 
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
+app.setErrorHandler(errorHandler);
+
 app.register(fastifyHelmet);
 
 app.register(fastifyCors, {
@@ -39,10 +43,6 @@ app.register(fastifyStatic, {
 
 app.register(fastifySwagger, fastifySwaggerOptions);
 app.register(fastifySwaggerUi, fastifySwaggerUiOptions);
-
-app.setValidatorCompiler(validatorCompiler);
-app.setSerializerCompiler(serializerCompiler);
-app.setErrorHandler(errorHandler);
 
 const startServer = async () => {
   await indexRoute(app);

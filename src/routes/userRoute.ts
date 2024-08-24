@@ -8,12 +8,14 @@ const userRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>()
     .post('/users',
       { schema: userCreateSchema },
+      // { schema: { hide: true } },
       createUserController
     );
 
   fastify.withTypeProvider<ZodTypeProvider>()
     .get('/users/:email',
-      { schema: userGetByEmailSchema },
+      // { schema: userGetByEmailSchema },
+      { schema: { hide: true } },
       getUserByEmailController
     );
 };
