@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export interface IUser {
+export interface IUserBody {
   name: string;
   email: string;
   password: string;
@@ -11,5 +11,12 @@ export interface IUserResponse {
   name: string;
   email: string;
   password?: string
+  createdAt: Date;
+}
+
+export interface IUserResponseModified {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
   createdAt: Date;
 }

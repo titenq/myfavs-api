@@ -11,8 +11,7 @@ export enum Type {
   MAX = 'deve ter o número máximo de caracteres igual a',
   LENGTH = 'deve ter o número de elementos igual a',
   EMAIL = 'com formato inválido',
-  URL = 'com formato inválido',
-  PASSWORD = 'deve ter pelo menos 8 caracteres, 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial'
+  URL = 'com formato inválido'
 }
 
 export enum Required {

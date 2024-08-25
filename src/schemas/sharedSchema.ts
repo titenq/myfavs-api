@@ -1,3 +1,4 @@
+import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
@@ -11,6 +12,11 @@ const errorSchema = z.object({
 <b>*message:</b> string
 <b>*statusCode:</b> number
 </code></pre>`);
+
+const _idSchema = z.string(genMsgError('_id', Type.STRING, Required.TRUE))
+  .refine(id => isValidObjectId(id), {
+  message: '_id inválido',
+});
 
 const userIdSchema = z.object({
   userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
@@ -29,6 +35,7 @@ const queryPageSchma = z.object({
 
 export {
   errorSchema,
+  _idSchema,
   userIdSchema,
   quizIdSchema,
   queryPageSchma

@@ -2,17 +2,17 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 
 import userService from '../services/userService';
 import errorHandler from '../helpers/errorHandler';
-import { IUser, IUserResponse } from '../interfaces/userInterface';
+import { IUserBody, IUserResponseModified } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 
 export const createUserController = async (
-  request: FastifyRequest<{ Body: IUser }>,
+  request: FastifyRequest<{ Body: IUserBody }>,
   reply: FastifyReply
 ) => {
   try {
     const { name, email, password } = request.body;
 
-    const response: IUserResponse | IGenericError = await userService.createUser({
+    const response: IUserResponseModified | IGenericError = await userService.createUser({
       name,
       email,
       password

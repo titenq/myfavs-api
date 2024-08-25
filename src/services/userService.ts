@@ -1,9 +1,9 @@
 import UserModel from '../models/UserModel';
-import { IUser, IUserResponse } from '../interfaces/userInterface';
+import { IUserBody, IUserResponse } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 
 const userService = {
-  createUser: async (user: IUser) => {
+  createUser: async (user: IUserBody) => {
     try {
       const userExists = await userService.getUserByEmail(user?.email);
 
