@@ -10,11 +10,12 @@ export const createUserController = async (
   reply: FastifyReply
 ) => {
   try {
-    const { name, email } = request.body;
+    const { name, email, password } = request.body;
 
     const response: IUserResponse | IGenericError = await userService.createUser({
       name,
-      email
+      email,
+      password
     });
 
     if ('error' in response) {

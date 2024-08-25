@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
 import { errorSchema } from './sharedSchema';
 
-const passwordSchema = z.string().refine(password => {
+const passwordSchema = z.string(genMsgError('password', Type.PASSWORD, Required.NULL)).refine(password => {
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
   const hasNumber = /\d/.test(password);
@@ -11,20 +11,13 @@ const passwordSchema = z.string().refine(password => {
   const hasMinLength = password.length >= 8;
 
   return hasUppercase && hasLowercase && hasNumber && hasSpecialChar && hasMinLength;
-}, {
-  message: 'A senha deve ter pelo menos 8 caracteres, 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial'
 });
-
-/* const userSchema = z.object({
-  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
-  email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-  password: z.string(genMsgError('password', Type.STRING, Required.TRUE))
-}); */
 
 const userSchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
   email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-    .email(genMsgError('email', Type.EMAIL, Required.NULL))
+    .email(genMsgError('email', Type.EMAIL, Required.NULL)),
+  password: passwordSchema
 });
 
 const userResponseSchema = z.object({
