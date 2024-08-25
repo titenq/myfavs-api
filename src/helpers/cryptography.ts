@@ -10,7 +10,7 @@ if (ENC_KEY.length !== 32 || IV.length !== 16) {
   throw new Error('Encryption key must be 32 bytes and IV must be 16 bytes.');
 }
 
-const encrypt = data => {
+const encrypt = (data: string) => {
   try {
     const cipher = createCipheriv('aes-256-cbc', Buffer.from(ENC_KEY, 'utf8'), Buffer.from(IV, 'utf8'));
     let encrypted = cipher.update(data, 'utf8', 'base64');
@@ -24,7 +24,7 @@ const encrypt = data => {
   }
 };
 
-const decrypt = encrypted => {
+const decrypt = (encrypted: string) => {
   try {
     const decipher = createDecipheriv('aes-256-cbc', Buffer.from(ENC_KEY, 'utf8'), Buffer.from(IV, 'utf8'));
     let decrypted = decipher.update(encrypted, 'base64', 'utf8');
@@ -38,11 +38,11 @@ const decrypt = encrypted => {
   }
 };
 
-const encryptArray = array => {
+const encryptArray = (array: string[]) => {
   return array.map(item => encrypt(item));
 };
 
-const decryptArray = arrayEncrypted => {
+const decryptArray = (arrayEncrypted: string[]) => {
   return arrayEncrypted.map(item => decrypt(item));
 };
 

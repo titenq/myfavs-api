@@ -28,15 +28,25 @@ const quizIdSchema = z.object({
     .describe('<pre><code><b>*quizId:</b> string</code></pre>')
 });
 
-const queryPageSchma = z.object({
+const queryPageSchema = z.object({
   page: z.string(genMsgError('page', Type.STRING, Required.TRUE))
     .describe('<pre><code><b>*page:</b> string</code></pre>')
 });
+
+const passwordSchema = () => {
+  return z.string()
+    .min(8, 'A senha deve ter pelo menos 8 caracteres')
+    .refine(password => /[A-Z]/.test(password), 'A senha deve conter pelo menos uma letra maiúscula')
+    .refine(password => /[a-z]/.test(password), 'A senha deve conter pelo menos uma letra minúscula')
+    .refine(password => /\d/.test(password), 'A senha deve conter pelo menos um número')
+    .refine(password => /[@$!%*?&]/.test(password), 'A senha deve conter pelo menos um caractere especial');
+};
 
 export {
   errorSchema,
   _idSchema,
   userIdSchema,
   quizIdSchema,
-  queryPageSchma
+  queryPageSchema,
+  passwordSchema
 };

@@ -1,17 +1,7 @@
-import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
-import { _idSchema, errorSchema } from './sharedSchema';
-
-const passwordSchema = () => {
-  return z.string()
-    .min(8, 'A senha deve ter pelo menos 8 caracteres')
-    .refine(password => /[A-Z]/.test(password), 'A senha deve conter pelo menos uma letra maiúscula')
-    .refine(password => /[a-z]/.test(password), 'A senha deve conter pelo menos uma letra minúscula')
-    .refine(password => /\d/.test(password), 'A senha deve conter pelo menos um número')
-    .refine(password => /[@$!%*?&]/.test(password), 'A senha deve conter pelo menos um caractere especial');
-};
+import { _idSchema, errorSchema, passwordSchema } from './sharedSchema';
 
 const userBodySchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),

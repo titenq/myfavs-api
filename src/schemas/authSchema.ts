@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
-import { errorSchema } from './sharedSchema';
+import { errorSchema, passwordSchema } from './sharedSchema';
 
 const userSchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
@@ -37,15 +37,16 @@ const authRegisterSchema = {
 };
 
 const authLoginSchema = {
-  summary: 'Buscar usuário por e-mail',
+  summary: 'Login',
   tags: ['auth'],
-  params: z.object({
+  body: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-      .describe('<pre><code><b>*email:</b> string</code></pre>')
+      .describe('<pre><code><b>*email:</b> string</code></pre>'),
+    password: passwordSchema()
   }),
   response: {
     201: z.object({
-      _id: z.string(genMsgError('_id', Type.STRING, Required.TRUE)),
+      _id: z.instanceof(Object).transform(id => id.toString()),
       name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
       picture: z.string(genMsgError('picture', Type.STRING, Required.NULL)).nullish(),

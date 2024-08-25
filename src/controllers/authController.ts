@@ -1,15 +1,19 @@
+import { pbkdf2Sync } from 'node:crypto';
+
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '../helpers/errorHandler';
 import userService from '../services/userService';
-import { IUser } from '../interfaces/userInterface';
+import { IAuthLoginBody } from '../interfaces/authInterface';
+import { IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
+import { IGenericError } from '../interfaces/errorInterface';
 
-export const authRegisterController = async (
+/* export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUser}>,
   reply: FastifyReply
 ) => {
   try {
-    const { name, email, picture } = request.body;
+    const { name, email, password } = request.body;
 
     const userExists = await userService.getUserByEmail(email);
 
@@ -36,21 +40,21 @@ export const authRegisterController = async (
     const errorMessage = {
       error: true,
       message: 'Erro ao criar usuário',
-      statusCode: 500,
+      statusCode: 400,
     };
 
     errorHandler(errorMessage, request, reply);
   }
-};
+}; */
 
 export const authLoginController = async (
-  request: FastifyRequest<{ Params: { email: string } }>,
+  request: FastifyRequest<{ Body: IAuthLoginBody }>,
   reply: FastifyReply
 ) => {
   try {
-    const { email } = request.params;
+    const { email, password } = request.body;
 
-    const user = await userService.getUserByEmail(email);
+    const user: IUserResponse | null = await userService.getUserByEmail(email);
 
     if (!user) {
       const errorMessage = {
@@ -64,12 +68,36 @@ export const authLoginController = async (
       return;
     }
 
-    reply.status(200).send(user);
+    const [salt, storedHash] = user.password.split(':');
+    const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+
+    if (hash !== storedHash) {
+      const errorMessage = {
+        error: true,
+        message: 'e-mail e/ou senha incorreta',
+        statusCode: 401
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const userModified: IUserResponseModified = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt
+    };
+
+    reply.status(200).send({
+      token: 'Gerar token',
+      userModified
+    });
   } catch (error) {
     const errorMessage = {
       error: true,
-      message: 'Erro ao buscar usuário por e-mail',
-      statusCode: 500,
+      message: 'Erro ao fazer login',
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);

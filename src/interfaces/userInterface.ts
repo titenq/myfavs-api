@@ -10,7 +10,7 @@ export interface IUserResponse {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password?: string
+  password: string
   createdAt: Date;
 }
 

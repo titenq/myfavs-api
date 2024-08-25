@@ -27,7 +27,7 @@ export const createUserController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'Erro ao criar usuário',
-      statusCode: 500
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);
