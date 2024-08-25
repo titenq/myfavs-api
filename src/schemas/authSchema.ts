@@ -3,32 +3,34 @@ import { z } from 'zod';
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
 import { errorSchema, passwordSchema } from './sharedSchema';
 
-const userSchema = z.object({
+const userBodySchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
-  email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-  picture: z.string(genMsgError('picture', Type.STRING, Required.FALSE)).nullish()
+  email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+    .email(genMsgError('email', Type.EMAIL, Required.NULL)),
+  password: passwordSchema()
 });
 
 const userResponseSchema = z.object({
-  _id: z.string(genMsgError('_id', Type.STRING, Required.TRUE)),
-  userSchema,
+  _id: z.instanceof(Object).transform(id => id.toString()),
+  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
+  email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
   createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
 });
 
 const authRegisterSchema = {
-  summary: 'Criar usuário',
+  summary: 'Registrar usuário',
   tags: ['auth'],
-  body: userSchema
+  body: userBodySchema
     .describe(`<pre><code><b>*name:</b> string
 <b>*email:</b> string
-<b>picture:</b> string
+<b>*password:</b> string
 </code></pre>`),
   response: {
     201: userResponseSchema
       .describe(`<pre><code><b>*_id:</b> string
 <b>*name:</b> string
 <b>*email:</b> string
-<b>picture:</b> string
+<b>*password:</b> string
 <b>*createdAt:</b> Date
 </code></pre>`),
     400: errorSchema,

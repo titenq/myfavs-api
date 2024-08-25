@@ -3,49 +3,39 @@ import { pbkdf2Sync } from 'node:crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '../helpers/errorHandler';
-import userService from '../services/userService';
+import authService from '../services/authService';
 import { IAuthLoginBody } from '../interfaces/authInterface';
-import { IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
+import { IUserBody, IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 
-/* export const authRegisterController = async (
-  request: FastifyRequest<{ Body: IUser}>,
+export const authRegisterController = async (
+  request: FastifyRequest<{ Body: IUserBody }>,
   reply: FastifyReply
 ) => {
   try {
     const { name, email, password } = request.body;
 
-    const userExists = await userService.getUserByEmail(email);
-
-    if (userExists) {
-      const errorMessage = {
-        error: true,
-        message: 'E-mail já cadastrado',
-        statusCode: 409,
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const user = await userService.createUser({
+    const response: IUserResponseModified | IGenericError = await authService.createUser({
       name,
       email,
-      picture
+      password
     });
 
-    reply.status(200).send(user);
+    if ('error' in response) {
+      return errorHandler(response, request, reply);
+    }
+
+    reply.status(201).send(response);
   } catch (error) {
-    const errorMessage = {
+    const errorMessage: IGenericError = {
       error: true,
       message: 'Erro ao criar usuário',
-      statusCode: 400,
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);
   }
-}; */
+};
 
 export const authLoginController = async (
   request: FastifyRequest<{ Body: IAuthLoginBody }>,
@@ -54,43 +44,22 @@ export const authLoginController = async (
   try {
     const { email, password } = request.body;
 
-    const user: IUserResponse | null = await userService.getUserByEmail(email);
+    const response: IUserResponse | IGenericError = await authService.login({ email, password });
 
-    if (!user) {
-      const errorMessage = {
-        error: true,
-        message: 'Erro ao buscar usuário por e-mail',
-        statusCode: 404,
-      };
-
-      errorHandler(errorMessage, request, reply);
+    if ('error' in response) {
+      errorHandler(response, request, reply);
 
       return;
     }
 
-    const [salt, storedHash] = user.password.split(':');
-    const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-
-    if (hash !== storedHash) {
-      const errorMessage = {
-        error: true,
-        message: 'e-mail e/ou senha incorreta',
-        statusCode: 401
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
+    const token = await reply.jwtSign({ _id: response._id, email: response.email });
 
     const userModified: IUserResponseModified = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt
+      _id: response._id,
+      name: response.name,
+      email: response.email,
+      createdAt: response.createdAt
     };
-
-    const token = await reply.jwtSign({ _id: user._id, email: user.email });
 
     reply
       .setCookie('token', token, {

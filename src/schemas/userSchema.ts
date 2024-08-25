@@ -1,42 +1,7 @@
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '../helpers/genMsgError';
-import { _idSchema, errorSchema, passwordSchema } from './sharedSchema';
-
-const userBodySchema = z.object({
-  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
-  email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-    .email(genMsgError('email', Type.EMAIL, Required.NULL)),
-  password: passwordSchema()
-});
-
-const userResponseSchema = z.object({
-  _id: z.instanceof(Object).transform(id => id.toString()),
-  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
-  email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-  createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
-});
-
-const userCreateSchema = {
-  summary: 'Criar usuário',
-  tags: ['users'],
-  body: userBodySchema
-    .describe(`<pre><code><b>*name:</b> string
-<b>*email:</b> string
-<b>*password:</b> string
-</code></pre>`),
-  response: {
-    201: userResponseSchema
-      .describe(`<pre><code><b>*_id:</b> string
-<b>*name:</b> string
-<b>*email:</b> string
-<b>*password:</b> string
-<b>*createdAt:</b> Date
-</code></pre>`),
-    400: errorSchema,
-    409: errorSchema
-  }
-};
+import { _idSchema, errorSchema } from './sharedSchema';
 
 const userGetByEmailSchema = {
   summary: 'Buscar usuário por e-mail',
@@ -64,6 +29,5 @@ const userGetByEmailSchema = {
 };
 
 export {
-  userCreateSchema,
   userGetByEmailSchema
 };
