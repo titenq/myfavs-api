@@ -79,6 +79,7 @@ export const authLoginController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -89,10 +90,18 @@ export const authLoginController = async (
       createdAt: user.createdAt
     };
 
-    reply.status(200).send({
-      token: 'Gerar token',
-      userModified
-    });
+    const token = await reply.jwtSign({ _id: user._id, email: user.email });
+
+    reply
+      .setCookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'PROD',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24 // 1 dia
+      })
+      .status(200)
+      .send(userModified);
   } catch (error) {
     const errorMessage = {
       error: true,

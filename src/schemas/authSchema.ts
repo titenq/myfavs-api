@@ -40,12 +40,14 @@ const authLoginSchema = {
   summary: 'Login',
   tags: ['auth'],
   body: z.object({
-    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-      .describe('<pre><code><b>*email:</b> string</code></pre>'),
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
     password: passwordSchema()
-  }),
+  })
+    .describe(`<pre><code><b>*email:</b> string
+<b>*password:</b> string
+</code></pre>`),
   response: {
-    201: z.object({
+    200: z.object({
       _id: z.instanceof(Object).transform(id => id.toString()),
       name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
@@ -58,7 +60,9 @@ const authLoginSchema = {
 <b>picture:</b> string
 <b>*createdAt:</b> Date
 </code></pre>`),
-    400: errorSchema
+    400: errorSchema,
+    401: errorSchema,
+    404: errorSchema
   }
 };
 

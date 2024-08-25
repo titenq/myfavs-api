@@ -7,6 +7,8 @@ import fastifyStatic from '@fastify/static';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import cookie from '@fastify/cookie';
+import jwt from '@fastify/jwt';
 
 import indexRoute from './routes/indexRoute';
 import apiBaseUrl from './helpers/apiBaseUrl';
@@ -15,7 +17,7 @@ import errorHandler from './helpers/errorHandler';
 import siteOrigin from './helpers/siteOrigin';
 import { fastifySwaggerOptions, fastifySwaggerUiOptions } from './helpers/swaggerOptions';
 
-const { PORT } = process.env;
+const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;
 
 const app = fastify();
 
@@ -34,6 +36,14 @@ app.register(fastifyCors, {
     'Access-Control-Allow-Origin'
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+});
+
+app.register(cookie, {
+  secret: COOKIE_SECRET!
+});
+
+app.register(jwt, {
+  secret: JWT_SECRET!
 });
 
 app.register(fastifyStatic, {
@@ -63,3 +73,13 @@ try {
 } catch (error) {
   console.error(error);
 }
+
+const listeners = ['SIGINT', 'SIGTERM'];
+
+listeners.forEach(signal => {
+  process.on(signal, async () => {
+    await app.close();
+
+    process.exit(0);
+  });
+});
