@@ -19,7 +19,7 @@ const userService = {
       
       const userCreated: IUserResponse = await UserModel.create(user);
 
-      userCreated.password = undefined;
+      /* userCreated.password = undefined; */
 
       return userCreated;
     } catch (error) {

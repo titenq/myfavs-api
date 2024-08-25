@@ -22,9 +22,9 @@ const passwordSchema = z.string().refine(password => {
 }); */
 
 const userSchema = z.object({
-  name: z.string(),
-  email: z.string(),
-  password: z.string()
+  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
+  email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+    .email(genMsgError('email', Type.EMAIL, Required.NULL))
 });
 
 const userResponseSchema = z.object({
@@ -40,7 +40,6 @@ const userCreateSchema = {
   body: userSchema
     .describe(`<pre><code><b>*name:</b> string
 <b>*email:</b> string
-<b>*password:</b> string
 </code></pre>`),
   response: {
     201: userResponseSchema
@@ -50,8 +49,7 @@ const userCreateSchema = {
 <b>*createdAt:</b> Date
 </code></pre>`),
     400: errorSchema,
-    409: errorSchema,
-    500: errorSchema
+    409: errorSchema
   }
 };
 

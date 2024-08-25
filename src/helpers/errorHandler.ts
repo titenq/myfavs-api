@@ -2,12 +2,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
 
 const errorHandler = (error: any, request: FastifyRequest, reply: FastifyReply) => {
-  console.log(error.issues)
-  if (error instanceof ZodError || error?.details?.issues) {
+  if (error instanceof ZodError) {
     reply.status(400).send({
-      statusCode: 400,
-      error: 'Bad Request',
-      issues: error instanceof ZodError ? error.issues : error.details.issues
+      error: true,
+      message: error.issues.map((issue: { message: string }) => issue.message).join(' | '),
+      statusCode: 400
     });
 
     return;
