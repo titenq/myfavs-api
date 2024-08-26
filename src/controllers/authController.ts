@@ -8,6 +8,7 @@ import { IAuthLoginBody, IAuthVerifyEmailQuery } from '../interfaces/authInterfa
 import { IUserBody, IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
 import UserModel from '../models/UserModel';
+import siteOrigin from '../helpers/siteOrigin';
 
 export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUserBody }>,
@@ -121,7 +122,7 @@ export const authVerifyEmailController = async (
       { $set: { isEmailVerified: true, emailVerificationToken: null } }
     );
 
-    reply.send({ message: 'e-mail verificado com sucesso' });
+    return reply.redirect(`${siteOrigin}/login`);
   } catch (error) {
     const errorMessage = {
       error: true,
