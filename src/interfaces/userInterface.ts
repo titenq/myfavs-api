@@ -18,5 +18,6 @@ export interface IUserResponseModified {
   _id: Types.ObjectId;
   name: string;
   email: string;
+  emailVerificationToken?: string;
   createdAt: Date;
 }
