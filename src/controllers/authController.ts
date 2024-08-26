@@ -4,9 +4,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '../helpers/errorHandler';
 import authService from '../services/authService';
-import { IAuthLoginBody } from '../interfaces/authInterface';
+import { IAuthLoginBody, IAuthVerifyEmailQuery } from '../interfaces/authInterface';
 import { IUserBody, IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
 import { IGenericError } from '../interfaces/errorInterface';
+import UserModel from '../models/UserModel';
 
 export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUserBody }>,
@@ -71,6 +72,56 @@ export const authLoginController = async (
       })
       .status(200)
       .send(userModified);
+  } catch (error) {
+    const errorMessage = {
+      error: true,
+      message: 'Erro ao fazer login',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const authVerifyEmailController = async (
+  request: FastifyRequest<{ Querystring: IAuthVerifyEmailQuery }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { email, token } = request.query;
+
+    if (!email || !token) {
+      const errorMessage = {
+        error: true,
+        message: 'Erro na verificação do e-mail',
+        statusCode: 400
+      };
+
+      errorHandler(errorMessage, request, reply);
+
+      return;
+    }
+
+    const user = await UserModel.findOne({ email, verificationToken: token });
+
+    if (!user) {
+      const errorMessage = {
+        error: true,
+        message: 'Erro na verificação do e-mail',
+        statusCode: 400
+      };
+
+      errorHandler(errorMessage, request, reply);
+
+      return;
+    }
+
+    await UserModel.findOneAndUpdate(
+      { _id: user._id },
+      { $set: { isEmailVerified: true, emailVerificationToken: null } }
+    );
+
+    reply.send({ message: 'e-mail verificado com sucesso' });
   } catch (error) {
     const errorMessage = {
       error: true,

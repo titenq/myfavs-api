@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import { authLoginController, authRegisterController } from '../controllers/authController';
-import { authLoginSchema, authRegisterSchema } from '../schemas/authSchema';
+import { authLoginController, authRegisterController, authVerifyEmailController } from '../controllers/authController';
+import { authLoginSchema, authRegisterSchema, authVerifyEmailSchema } from '../schemas/authSchema';
 
 const authRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>()
@@ -15,6 +15,12 @@ const authRoute = async (fastify: FastifyInstance) => {
     .post('/auth/login',
       { schema: authLoginSchema },
       authLoginController
+  );
+  
+  fastify.withTypeProvider<ZodTypeProvider>()
+    .get('/auth/verify-email',
+      { schema: authVerifyEmailSchema },
+      authVerifyEmailController
     );
 };
 

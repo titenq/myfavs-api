@@ -10,7 +10,9 @@ export interface IUserResponse {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password: string
+  password: string;
+  isEmailVerified?: boolean | null;
+  emailVerificationToken?: string | null;
   createdAt: Date;
 }
 
@@ -18,6 +20,7 @@ export interface IUserResponseModified {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  emailVerificationToken?: string;
+  isEmailVerified?: boolean | null;
+  emailVerificationToken?: string | null;
   createdAt: Date;
 }

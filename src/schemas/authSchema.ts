@@ -68,7 +68,29 @@ const authLoginSchema = {
   }
 };
 
+const authVerifyEmailSchema = {
+  summary: 'Verificar e-mail',
+  tags: ['auth'],
+  query: z.object({
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+      .email(genMsgError('email', Type.EMAIL, Required.FALSE)),
+    token: z.string(genMsgError('token', Type.STRING, Required.TRUE))
+  })
+    .describe(`<pre><code><b>*email:</b> string
+<b>*password:</b> string
+</code></pre>`),
+  response: {
+    200: z.object({
+      message: z.string(genMsgError('message', Type.STRING, Required.TRUE))
+    })
+      .describe(`<pre><code><b>*message:</b> string
+</code></pre>`),
+    400: errorSchema
+  }
+};
+
 export {
   authRegisterSchema,
-  authLoginSchema
+  authLoginSchema,
+  authVerifyEmailSchema
 };
