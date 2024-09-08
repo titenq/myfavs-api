@@ -94,7 +94,7 @@ export const authVerifyEmailController = async (
     if (!email || !token) {
       const errorMessage = {
         error: true,
-        message: 'Erro na verificação do e-mail',
+        message: 'Erro ao verificar e-mail',
         statusCode: 400
       };
 
@@ -108,7 +108,7 @@ export const authVerifyEmailController = async (
     if (!user) {
       const errorMessage = {
         error: true,
-        message: 'Erro na verificação do e-mail',
+        message: 'Erro ao verificar e-mail',
         statusCode: 400
       };
 
@@ -122,11 +122,11 @@ export const authVerifyEmailController = async (
       { $set: { isEmailVerified: true, emailVerificationToken: null } }
     );
 
-    return reply.redirect(`${siteOrigin}/login`);
+    return reply.redirect(`${siteOrigin}/verificar-email`);
   } catch (error) {
     const errorMessage = {
       error: true,
-      message: 'Erro ao fazer login',
+      message: 'Erro ao verificar e-mail',
       statusCode: 400
     };
 
