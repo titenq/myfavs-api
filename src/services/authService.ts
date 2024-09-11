@@ -1,12 +1,12 @@
 import { pbkdf2Sync, randomUUID } from 'node:crypto';
 
-import UserModel from '../models/UserModel';
-import { IUserBody, IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
-import { IGenericError } from '../interfaces/errorInterface';
 import userService from './userService';
-import { IAuthLoginBody } from '../interfaces/authInterface';
-import apiBaseUrl from '../helpers/apiBaseUrl';
-import sendVerificationEmail from '../helpers/sendVerificationEmail';
+import UserModel from '@/models/UserModel';
+import { IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
+import { IAuthLoginBody } from '@/interfaces/authInterface';
+import apiBaseUrl from '@/helpers/apiBaseUrl';
+import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 
 const authService = {
   createUser: async (user: IUserBody) => {
@@ -16,7 +16,7 @@ const authService = {
       if (userExists) {
         const errorMessage: IGenericError = {
           error: true,
-          message: 'E-mail já cadastrado',
+          message: 'e-mail já cadastrado',
           statusCode: 409
         };
 
@@ -46,7 +46,7 @@ const authService = {
     } catch (error) {
       const errorMessage: IGenericError = {
         error: true,
-        message: 'Erro ao criar usuário',
+        message: 'erro ao criar usuário',
         statusCode: 400
       };
 
@@ -63,7 +63,7 @@ const authService = {
       if (!user) {
         const errorMessage: IGenericError = {
           error: true,
-          message: 'Erro ao buscar usuário por e-mail',
+          message: 'e-mail e/ou senha incorreta',
           statusCode: 404
         };
 
@@ -73,8 +73,8 @@ const authService = {
       if (!user.isEmailVerified) {
         const errorMessage: IGenericError = {
           error: true,
-          message: 'Erro ao buscar usuário por e-mail',
-          statusCode: 404
+          message: 'usuário não verificou o e-mail',
+          statusCode: 403
         };
 
         return errorMessage;
@@ -97,7 +97,7 @@ const authService = {
     } catch (error) {
       const errorMessage: IGenericError = {
         error: true,
-        message: 'Erro ao fazer login',
+        message: 'erro ao fazer login',
         statusCode: 400
       };
 

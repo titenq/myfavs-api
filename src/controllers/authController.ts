@@ -1,14 +1,12 @@
-import { pbkdf2Sync } from 'node:crypto';
-
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import errorHandler from '../helpers/errorHandler';
-import authService from '../services/authService';
-import { IAuthLoginBody, IAuthVerifyEmailQuery } from '../interfaces/authInterface';
-import { IUserBody, IUserResponse, IUserResponseModified } from '../interfaces/userInterface';
-import { IGenericError } from '../interfaces/errorInterface';
-import UserModel from '../models/UserModel';
-import siteOrigin from '../helpers/siteOrigin';
+import errorHandler from '@/helpers/errorHandler';
+import authService from '@/services/authService';
+import { IAuthLoginBody, IAuthVerifyEmailQuery } from '@/interfaces/authInterface';
+import { IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
+import UserModel from '@/models/UserModel';
+import siteOrigin from '@/helpers/siteOrigin';
 
 export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUserBody }>,
@@ -31,7 +29,7 @@ export const authRegisterController = async (
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'Erro ao criar usuário',
+      message: 'erro ao criar usuário',
       statusCode: 400
     };
 
@@ -54,7 +52,7 @@ export const authLoginController = async (
       return;
     }
 
-    const token = await reply.jwtSign({ _id: response._id, email: response.email });
+    const token = await reply.jwtSign({ _id: response._id });
 
     const userModified: IUserResponseModified = {
       _id: response._id,
@@ -76,7 +74,7 @@ export const authLoginController = async (
   } catch (error) {
     const errorMessage = {
       error: true,
-      message: 'Erro ao fazer login',
+      message: 'erro ao fazer login',
       statusCode: 400
     };
 
@@ -94,7 +92,7 @@ export const authVerifyEmailController = async (
     if (!email || !token) {
       const errorMessage = {
         error: true,
-        message: 'Erro ao verificar e-mail',
+        message: 'erro ao verificar e-mail',
         statusCode: 400
       };
 
@@ -108,7 +106,7 @@ export const authVerifyEmailController = async (
     if (!user) {
       const errorMessage = {
         error: true,
-        message: 'Erro ao verificar e-mail',
+        message: 'erro ao verificar e-mail',
         statusCode: 400
       };
 
@@ -126,7 +124,7 @@ export const authVerifyEmailController = async (
   } catch (error) {
     const errorMessage = {
       error: true,
-      message: 'Erro ao verificar e-mail',
+      message: 'erro ao verificar e-mail',
       statusCode: 400
     };
 

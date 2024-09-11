@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import userService from '../services/userService';
-import errorHandler from '../helpers/errorHandler';
-import { IGenericError } from '../interfaces/errorInterface';
+import userService from '@/services/userService';
+import errorHandler from '@/helpers/errorHandler';
+import { IGenericError } from '@/interfaces/errorInterface';
 
 export const getUserByEmailController = async (
   request: FastifyRequest<{ Params: { email: string } }>,
@@ -16,7 +16,7 @@ export const getUserByEmailController = async (
     if (!user) {
       const errorMessage: IGenericError = {
         error: true,
-        message: 'Erro ao buscar usuário por e-mail',
+        message: 'erro ao buscar usuário por e-mail',
         statusCode: 404,
       };
 
@@ -29,7 +29,7 @@ export const getUserByEmailController = async (
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'Erro ao buscar usuário por e-mail',
+      message: 'erro ao buscar usuário por e-mail',
       statusCode: 500,
     };
 

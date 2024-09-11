@@ -1,6 +1,6 @@
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
 
-import mongoose from '../db';
+import mongoose from '@/db';
 
 const UserSchema = new mongoose.Schema({
   name: {
