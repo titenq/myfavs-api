@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import errorHandler from '@/helpers/errorHandler';
 import authService from '@/services/authService';
 import { IAuthLoginBody, IAuthVerifyEmailQuery } from '@/interfaces/authInterface';
-import { IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
+import { IEmailVerifiedResponse, IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import UserModel from '@/models/UserModel';
 import siteOrigin from '@/helpers/siteOrigin';
@@ -83,46 +83,23 @@ export const authLoginController = async (
 };
 
 export const authVerifyEmailController = async (
-  request: FastifyRequest<{ Querystring: IAuthVerifyEmailQuery }>,
+  request: FastifyRequest<{ Body: IAuthVerifyEmailQuery }>,
   reply: FastifyReply
 ) => {
   try {
-    const { email, token } = request.query;
+    const { email, token } = request.body;
 
-    if (!email || !token) {
-      const errorMessage = {
-        error: true,
-        message: 'erro ao verificar e-mail',
-        statusCode: 400
-      };
+    const response: IEmailVerifiedResponse | IGenericError = await authService.verifyEmail({ email, token });
 
-      errorHandler(errorMessage, request, reply);
+    if ('error' in response) {
+      errorHandler(response, request, reply);
 
       return;
     }
 
-    const user = await UserModel.findOne({ email, verificationToken: token });
-
-    if (!user) {
-      const errorMessage = {
-        error: true,
-        message: 'erro ao verificar e-mail',
-        statusCode: 400
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    await UserModel.findOneAndUpdate(
-      { _id: user._id },
-      { $set: { isEmailVerified: true, emailVerificationToken: null } }
-    );
-
-    return reply.redirect(`${siteOrigin}/verificar-email`);
+    reply.status(200).send(response);
   } catch (error) {
-    const errorMessage = {
+    const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao verificar e-mail',
       statusCode: 400

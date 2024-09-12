@@ -2,14 +2,19 @@ import { pbkdf2Sync, randomUUID } from 'node:crypto';
 
 import userService from './userService';
 import UserModel from '@/models/UserModel';
-import { IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
+import {
+  IEmailVerifiedResponse,
+  IUserBody,
+  IUserResponse,
+  IUserResponseModified
+} from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IAuthLoginBody } from '@/interfaces/authInterface';
-import apiBaseUrl from '@/helpers/apiBaseUrl';
+import { IAuthLoginBody, IAuthVerifyEmailQuery } from '@/interfaces/authInterface';
 import sendVerificationEmail from '@/helpers/sendVerificationEmail';
+import siteOrigin from '@/helpers/siteOrigin';
 
 const authService = {
-  createUser: async (user: IUserBody) => {
+  createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
     try {
       const userExists = await userService.getUserByEmail(user.email);
 
@@ -25,7 +30,7 @@ const authService = {
 
       const emailVerificationToken = randomUUID();
 
-      const verificationLink = `${apiBaseUrl}/auth/verify-email?email=${encodeURIComponent(user.email)}&token=${emailVerificationToken}`;
+      const verificationLink = `${siteOrigin}/verificar-email?email=${encodeURIComponent(user.email)}&token=${emailVerificationToken}`;
 
       sendVerificationEmail(user.email, verificationLink);
       
@@ -98,6 +103,59 @@ const authService = {
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao fazer login',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
+
+  verifyEmail: async (verifyEmailData: IAuthVerifyEmailQuery): Promise<IEmailVerifiedResponse | IGenericError> => {
+    try {
+      const user = await UserModel.findOne({
+        email: verifyEmailData.email,
+        emailVerificationToken: verifyEmailData.token
+      });
+
+      if (!user) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'erro ao verificar e-mail',
+          statusCode: 400
+        };
+
+        return errorMessage;
+      }
+
+      const userVerified = await UserModel.findOneAndUpdate(
+        { _id: user._id },
+        { $set: { isEmailVerified: true, emailVerificationToken: null } }
+      ).exec();
+
+      console.log(userVerified);
+
+      if (!userVerified) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'erro ao verificar e-mail',
+          statusCode: 400
+        };
+
+        return errorMessage;
+      }
+
+      const userVerifiedModified: IEmailVerifiedResponse = {
+        _id: userVerified._id,
+        name: userVerified.name,
+        email: userVerified.email,
+        createdAt: userVerified.createdAt
+      };
+
+      return userVerifiedModified;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao verificar e-mail',
         statusCode: 400
       };
 

@@ -71,7 +71,7 @@ const authLoginSchema = {
 const authVerifyEmailSchema = {
   summary: 'Verificar e-mail',
   tags: ['auth'],
-  query: z.object({
+  body: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
       .email(genMsgError('email', Type.EMAIL, Required.FALSE)),
     token: z.string(genMsgError('token', Type.STRING, Required.TRUE))
@@ -81,9 +81,15 @@ const authVerifyEmailSchema = {
 </code></pre>`),
   response: {
     200: z.object({
-      message: z.string(genMsgError('message', Type.STRING, Required.TRUE))
+      _id: z.instanceof(Object).transform(id => id.toString()),
+      name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
+      email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
     })
-      .describe(`<pre><code><b>*message:</b> string
+      .describe(`<pre><code><b>*_id:</b> string
+<b>*name:</b> string
+<b>*email:</b> string
+<b>*createdAt:</b> Date
 </code></pre>`),
     400: errorSchema
   }

@@ -26,7 +26,7 @@ const authRoute = async (fastify: FastifyInstance) => {
   );
   
   fastify.withTypeProvider<ZodTypeProvider>()
-    .get('/auth/verify-email',
+    .post('/auth/verify-email',
       { schema: authVerifyEmailSchema },
       authVerifyEmailController
     );

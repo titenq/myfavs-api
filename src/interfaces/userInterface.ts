@@ -24,3 +24,5 @@ export interface IUserResponseModified {
   emailVerificationToken?: string | null;
   createdAt: Date;
 }
+
+export type IEmailVerifiedResponse = Omit<IUserResponseModified, 'isEmailVerified' | 'emailVerificationToken'>;
