@@ -82,6 +82,29 @@ export const authLoginController = async (
   }
 };
 
+export const authLogoutController = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    reply
+      .clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'PROD',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 24 // 1 dia
+      })
+      .status(200)
+      .send({ message: 'logout realizado com sucesso' });
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao fazer logout',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
 export const authVerifyEmailController = async (
   request: FastifyRequest<{ Body: IAuthVerifyEmailQuery }>,
   reply: FastifyReply

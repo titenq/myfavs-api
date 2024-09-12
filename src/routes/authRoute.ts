@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import {
   authLoginController,
+  authLogoutController,
   authRegisterController,
   authVerifyEmailController
 } from '@/controllers/authController';
@@ -23,6 +24,12 @@ const authRoute = async (fastify: FastifyInstance) => {
     .post('/auth/login',
       { schema: authLoginSchema },
       authLoginController
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>()
+    .post('/auth/logout',
+      { schema: { hide: true } },
+      authLogoutController
   );
   
   fastify.withTypeProvider<ZodTypeProvider>()
