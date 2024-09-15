@@ -12,3 +12,11 @@ export interface IDecodedToken {
   iat: number;
   exp: number;
 }
+
+export interface IResendLinkBody {
+  email: string;
+}
+
+export interface IResendLinkResponse {
+  message: string;
+}

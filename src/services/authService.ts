@@ -14,8 +14,12 @@ import { IGenericError } from '@/interfaces/errorInterface';
 import {
   IAuthLoginBody,
   IAuthVerifyEmail,
-  IDecodedToken
+  IDecodedToken,
+  IResendLinkBody,
+  IResendLinkResponse
 } from '@/interfaces/authInterface';
+import sendVerificationEmail from '@/helpers/sendVerificationEmail';
+import siteOrigin from '@/helpers/siteOrigin';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -100,7 +104,7 @@ const authService = {
 
         return errorMessage;
       }
-      
+
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao fazer login',
@@ -174,6 +178,56 @@ const authService = {
       return errorMessage;
     }
   },
+
+  resendLink: async (fastify: FastifyInstance, resendLinkBody: IResendLinkBody): Promise<IResendLinkResponse | IGenericError> => {
+    try {
+      const { email } = resendLinkBody;
+
+      const user = await UserModel.findOne({ email });
+
+      if (!user) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'usuário não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      if (user.isEmailVerified) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'O e-mail já foi verificado',
+          statusCode: 400
+        };
+
+        return errorMessage;
+      }
+
+      const token = fastify.jwt.sign({ _id: user._id }, { expiresIn: '1d' });
+
+      user.emailVerificationToken = token;
+      await user.save();
+      
+      const verificationLink = `${siteOrigin}/verificar-email?token=${token}`;
+      await sendVerificationEmail(user.email, verificationLink);
+
+      const responseMessage: IResendLinkResponse = {
+        message: 'novo link de verificação enviado para o e-mail',
+      };
+
+      return responseMessage;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao reenviar link de verificação',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  }
 };
 
 export default authService;

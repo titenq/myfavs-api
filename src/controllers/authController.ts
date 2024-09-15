@@ -2,7 +2,12 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '@/helpers/errorHandler';
 import authService from '@/services/authService';
-import { IAuthLoginBody, IAuthVerifyEmail } from '@/interfaces/authInterface';
+import {
+  IAuthLoginBody,
+  IAuthVerifyEmail,
+  IResendLinkBody,
+  IResendLinkResponse
+} from '@/interfaces/authInterface';
 import {
   IEmailVerifiedResponse,
   IUserBody,
@@ -31,7 +36,7 @@ export const authRegisterController = async (
       return errorHandler(response, request, reply);
     }
 
-    const emailVerificationToken = await reply.jwtSign({ _id: response._id }, { expiresIn: 60 });
+    const emailVerificationToken = await reply.jwtSign({ _id: response._id }, { expiresIn: '1d' });
 
     await UserModel.findByIdAndUpdate(
       { _id: response._id },
@@ -150,6 +155,33 @@ export const authVerifyEmailController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao verificar e-mail',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const authResendLinkController = async (
+  request: FastifyRequest<{ Body: IResendLinkBody }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { email } = request.body;
+
+    const response: IResendLinkResponse | IGenericError = await authService.resendLink(request.server, { email });
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao reenviar link de verificação',
       statusCode: 400
     };
 

@@ -5,11 +5,13 @@ import {
   authLoginController,
   authLogoutController,
   authRegisterController,
+  authResendLinkController,
   authVerifyEmailController
 } from '@/controllers/authController';
 import {
   authLoginSchema,
   authRegisterSchema,
+  authResendLinkSchema,
   authVerifyEmailSchema
 } from '@/schemas/authSchema';
 
@@ -36,6 +38,12 @@ const authRoute = async (fastify: FastifyInstance) => {
     .post('/auth/verify-email',
       { schema: authVerifyEmailSchema },
       authVerifyEmailController
+    );
+  
+  fastify.withTypeProvider<ZodTypeProvider>()
+    .post('/auth/resend-link',
+      { schema: authResendLinkSchema },
+      authResendLinkController
     );
 };
 

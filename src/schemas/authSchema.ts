@@ -93,8 +93,28 @@ const authVerifyEmailSchema = {
   }
 };
 
+const authResendLinkSchema = {
+  summary: 'Reenviar link',
+  tags: ['auth'],
+  body: z.object({
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+  })
+    .describe(`<pre><code><b>*email:</b> string
+</code></pre>`),
+  response: {
+    200: z.object({
+      message: z.string(genMsgError('message', Type.STRING, Required.TRUE))
+    })
+      .describe(`<pre><code><b>*message:</b> string
+</code></pre>`),
+    400: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   authRegisterSchema,
   authLoginSchema,
-  authVerifyEmailSchema
+  authVerifyEmailSchema,
+  authResendLinkSchema
 };
