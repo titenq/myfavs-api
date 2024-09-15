@@ -1,4 +1,6 @@
-import { pbkdf2Sync, randomUUID } from 'node:crypto';
+import { pbkdf2Sync } from 'node:crypto';
+
+import { FastifyInstance } from 'fastify';
 
 import userService from './userService';
 import UserModel from '@/models/UserModel';
@@ -9,9 +11,11 @@ import {
   IUserResponseModified
 } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IAuthLoginBody, IAuthVerifyEmailQuery } from '@/interfaces/authInterface';
-import sendVerificationEmail from '@/helpers/sendVerificationEmail';
-import siteOrigin from '@/helpers/siteOrigin';
+import {
+  IAuthLoginBody,
+  IAuthVerifyEmail,
+  IDecodedToken
+} from '@/interfaces/authInterface';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -27,27 +31,10 @@ const authService = {
 
         return errorMessage;
       }
-
-      const emailVerificationToken = randomUUID();
-
-      const verificationLink = `${siteOrigin}/verificar-email?email=${encodeURIComponent(user.email)}&token=${emailVerificationToken}`;
-
-      sendVerificationEmail(user.email, verificationLink);
       
-      const userCreated: IUserResponse = await UserModel.create({
-        ...user,
-        emailVerificationToken
-      });
+      const userCreated: IUserResponse = await UserModel.create(user);
 
-      const userModified: IUserResponseModified = {
-        _id: userCreated._id,
-        name: userCreated.name,
-        email: userCreated.email,
-        emailVerificationToken,
-        createdAt: userCreated.createdAt
-      };
-
-      return userModified;
+      return userCreated;
     } catch (error) {
       const errorMessage: IGenericError = {
         error: true,
@@ -59,7 +46,7 @@ const authService = {
     }
   },
 
-  login: async (loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
+  login: async (fastify: FastifyInstance, loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
     try {
       const { email, password } = loginData;
 
@@ -73,6 +60,10 @@ const authService = {
         };
 
         return errorMessage;
+      }
+
+      if (user.emailVerificationToken) {
+        await fastify.jwt.verify(user.emailVerificationToken) as IDecodedToken;
       }
 
       if (!user.isEmailVerified) {
@@ -100,6 +91,16 @@ const authService = {
 
       return user;
     } catch (error) {
+      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'token expirado',
+          statusCode: 401
+        };
+
+        return errorMessage;
+      }
+      
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao fazer login',
@@ -110,10 +111,12 @@ const authService = {
     }
   },
 
-  verifyEmail: async (verifyEmailData: IAuthVerifyEmailQuery): Promise<IEmailVerifiedResponse | IGenericError> => {
+  verifyEmail: async (fastify: FastifyInstance, verifyEmailData: IAuthVerifyEmail): Promise<IEmailVerifiedResponse | IGenericError> => {
     try {
+      const decoded = await fastify.jwt.verify(verifyEmailData.token) as IDecodedToken;
+
       const user = await UserModel.findOne({
-        email: verifyEmailData.email,
+        _id: decoded._id,
         emailVerificationToken: verifyEmailData.token
       });
 
@@ -129,10 +132,9 @@ const authService = {
 
       const userVerified = await UserModel.findOneAndUpdate(
         { _id: user._id },
-        { $set: { isEmailVerified: true, emailVerificationToken: null } }
+        { $set: { isEmailVerified: true, emailVerificationToken: null } },
+        { new: true }
       ).exec();
-
-      console.log(userVerified);
 
       if (!userVerified) {
         const errorMessage: IGenericError = {
@@ -153,6 +155,16 @@ const authService = {
 
       return userVerifiedModified;
     } catch (error) {
+      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'token expirado',
+          statusCode: 401
+        };
+
+        return errorMessage;
+      }
+
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao verificar e-mail',

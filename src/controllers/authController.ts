@@ -2,11 +2,17 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '@/helpers/errorHandler';
 import authService from '@/services/authService';
-import { IAuthLoginBody, IAuthVerifyEmailQuery } from '@/interfaces/authInterface';
-import { IEmailVerifiedResponse, IUserBody, IUserResponse, IUserResponseModified } from '@/interfaces/userInterface';
+import { IAuthLoginBody, IAuthVerifyEmail } from '@/interfaces/authInterface';
+import {
+  IEmailVerifiedResponse,
+  IUserBody,
+  IUserResponse,
+  IUserResponseModified
+} from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
-import UserModel from '@/models/UserModel';
+import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import siteOrigin from '@/helpers/siteOrigin';
+import UserModel from '@/models/UserModel';
 
 export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUserBody }>,
@@ -25,7 +31,26 @@ export const authRegisterController = async (
       return errorHandler(response, request, reply);
     }
 
-    reply.status(201).send(response);
+    const emailVerificationToken = await reply.jwtSign({ _id: response._id }, { expiresIn: 60 });
+
+    await UserModel.findByIdAndUpdate(
+      { _id: response._id },
+      { emailVerificationToken },
+      { new: true }
+    );
+
+    const verificationLink = `${siteOrigin}/verificar-email?token=${emailVerificationToken}`;
+
+    await sendVerificationEmail(response.email, verificationLink);
+
+    const user: IUserResponseModified = {
+      _id: response._id,
+      name: response.name,
+      email: response.email,
+      createdAt: response.createdAt
+    };
+
+    reply.status(201).send(user);
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
@@ -44,7 +69,7 @@ export const authLoginController = async (
   try {
     const { email, password } = request.body;
 
-    const response: IUserResponse | IGenericError = await authService.login({ email, password });
+    const response: IUserResponse | IGenericError = await authService.login(request.server, { email, password });
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -106,13 +131,13 @@ export const authLogoutController = async (request: FastifyRequest, reply: Fasti
 };
 
 export const authVerifyEmailController = async (
-  request: FastifyRequest<{ Body: IAuthVerifyEmailQuery }>,
+  request: FastifyRequest<{ Body: IAuthVerifyEmail }>,
   reply: FastifyReply
 ) => {
   try {
-    const { email, token } = request.body;
+    const { token } = request.body;
 
-    const response: IEmailVerifiedResponse | IGenericError = await authService.verifyEmail({ email, token });
+    const response: IEmailVerifiedResponse | IGenericError = await authService.verifyEmail(request.server, { token });
 
     if ('error' in response) {
       errorHandler(response, request, reply);

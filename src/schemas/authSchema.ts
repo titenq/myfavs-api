@@ -72,12 +72,9 @@ const authVerifyEmailSchema = {
   summary: 'Verificar e-mail',
   tags: ['auth'],
   body: z.object({
-    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-      .email(genMsgError('email', Type.EMAIL, Required.FALSE)),
     token: z.string(genMsgError('token', Type.STRING, Required.TRUE))
   })
-    .describe(`<pre><code><b>*email:</b> string
-<b>*password:</b> string
+    .describe(`<pre><code><b>*token:</b> string
 </code></pre>`),
   response: {
     200: z.object({
@@ -91,7 +88,8 @@ const authVerifyEmailSchema = {
 <b>*email:</b> string
 <b>*createdAt:</b> Date
 </code></pre>`),
-    400: errorSchema
+    400: errorSchema,
+    401: errorSchema
   }
 };
 

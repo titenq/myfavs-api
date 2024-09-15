@@ -3,7 +3,12 @@ export interface IAuthLoginBody {
   password: string;
 }
 
-export interface IAuthVerifyEmailQuery {
-  email: string;
+export interface IAuthVerifyEmail {
   token: string;
+}
+
+export interface IDecodedToken {
+  _id: string;
+  iat: number;
+  exp: number;
 }
