@@ -284,7 +284,7 @@ const authService = {
       if (!user) {
         const errorMessage: IGenericError = {
           error: true,
-          message: 'usuário não encontrado',
+          message: 'token não encontrado',
           statusCode: 404
         };
 
