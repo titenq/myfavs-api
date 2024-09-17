@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { errorSchema, passwordSchema } from './sharedSchema';
+import { errorSchema, passwordSchema } from '@/schemas/sharedSchema';
 
 const userBodySchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),

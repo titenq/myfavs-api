@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from '../helpers/genMsgError';
-import { _idSchema, errorSchema } from './sharedSchema';
+import { genMsgError, Required, Type } from '@/helpers/genMsgError';
+import { _idSchema, errorSchema } from '@/schemas/sharedSchema';
 
 const userGetByEmailSchema = {
   summary: 'Buscar usuário por e-mail',

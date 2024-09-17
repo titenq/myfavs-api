@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import apiBaseUrl from './apiBaseUrl';
+import apiBaseUrl from '@/helpers/apiBaseUrl';
 
 const pingEndpoint = () => {
   setInterval(async () => {

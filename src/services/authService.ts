@@ -2,7 +2,7 @@ import { pbkdf2Sync } from 'node:crypto';
 
 import { FastifyInstance } from 'fastify';
 
-import userService from './userService';
+import userService from '@/services/userService';
 import UserModel from '@/models/UserModel';
 import {
   IEmailVerifiedResponse,

@@ -10,12 +10,12 @@ import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 
-import indexRoute from './routes/indexRoute';
-import apiBaseUrl from './helpers/apiBaseUrl';
-import pingEndpoint from './helpers/pingEndpoint';
-import errorHandler from './helpers/errorHandler';
-import siteOrigin from './helpers/siteOrigin';
-import { fastifySwaggerOptions, fastifySwaggerUiOptions } from './helpers/swaggerOptions';
+import indexRoute from '@/routes/indexRoute';
+import apiBaseUrl from '@/helpers/apiBaseUrl';
+import pingEndpoint from '@/helpers/pingEndpoint';
+import errorHandler from '@/helpers/errorHandler';
+import siteOrigin from '@/helpers/siteOrigin';
+import { fastifySwaggerOptions, fastifySwaggerUiOptions } from '@/helpers/swaggerOptions';
 
 const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;
 
