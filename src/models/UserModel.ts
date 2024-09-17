@@ -27,6 +27,9 @@ const UserSchema = new mongoose.Schema({
   emailVerificationToken: {
     type: String
   },
+  forgotPasswordToken: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now

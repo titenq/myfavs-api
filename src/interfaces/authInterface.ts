@@ -20,3 +20,8 @@ export interface IResendLinkBody {
 export interface IResendLinkResponse {
   message: string;
 }
+
+export interface IResetPasswordBody {
+  token: string;
+  password: string;
+}

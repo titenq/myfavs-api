@@ -13,6 +13,7 @@ export interface IUserResponse {
   password: string;
   isEmailVerified?: boolean | null;
   emailVerificationToken?: string | null;
+  forgotPasswordToken?: string | null;
   createdAt: Date;
 }
 
@@ -22,7 +23,8 @@ export interface IUserResponseModified {
   email: string;
   isEmailVerified?: boolean | null;
   emailVerificationToken?: string | null;
+  forgotPasswordToken?: string | null;
   createdAt: Date;
 }
 
-export type IEmailVerifiedResponse = Omit<IUserResponseModified, 'isEmailVerified' | 'emailVerificationToken'>;
+export type IEmailVerifiedResponse = Omit<IUserResponseModified, 'isEmailVerified' | 'emailVerificationToken' | 'forgotPasswordToken'>;

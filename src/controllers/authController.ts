@@ -6,7 +6,8 @@ import {
   IAuthLoginBody,
   IAuthVerifyEmail,
   IResendLinkBody,
-  IResendLinkResponse
+  IResendLinkResponse,
+  IResetPasswordBody
 } from '@/interfaces/authInterface';
 import {
   IEmailVerifiedResponse,
@@ -97,7 +98,7 @@ export const authLoginController = async (
         secure: process.env.NODE_ENV === 'PROD',
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24 // 1 dia
+        maxAge: 60 * 60 * 24 * 30 // 30 dias
       })
       .status(200)
       .send(userModified);
@@ -120,7 +121,7 @@ export const authLogoutController = async (request: FastifyRequest, reply: Fasti
         secure: process.env.NODE_ENV === 'PROD',
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24 // 1 dia
+        maxAge: 60 * 60 * 24 * 30 // 30 dias
       })
       .status(200)
       .send({ message: 'logout realizado com sucesso' });
@@ -182,6 +183,60 @@ export const authResendLinkController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao reenviar link de verificação',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const authForgotPasswordController = async (
+  request: FastifyRequest<{ Body: IResendLinkBody }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { email } = request.body;
+
+    const response: IResendLinkResponse | IGenericError = await authService.forgotPassword(request.server, { email });
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao recadastrar senha',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const authResetPasswordController = async (
+  request: FastifyRequest<{ Body: IResetPasswordBody }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { token, password } = request.body;
+
+    const response: IResendLinkResponse | IGenericError = await authService.resetPassword(request.server, { token, password });
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao resetar senha',
       statusCode: 400
     };
 

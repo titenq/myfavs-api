@@ -16,10 +16,12 @@ import {
   IAuthVerifyEmail,
   IDecodedToken,
   IResendLinkBody,
-  IResendLinkResponse
+  IResendLinkResponse,
+  IResetPasswordBody
 } from '@/interfaces/authInterface';
-import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import siteOrigin from '@/helpers/siteOrigin';
+import sendVerificationEmail from '@/helpers/sendVerificationEmail';
+import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -222,6 +224,97 @@ const authService = {
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao reenviar link de verificação',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
+
+  forgotPassword: async (fastify: FastifyInstance, forgotPasswordBody: IResendLinkBody): Promise<IResendLinkResponse | IGenericError> => {
+    try {
+      const { email } = forgotPasswordBody;
+
+      const user = await UserModel.findOne({ email });
+
+      if (!user) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'usuário não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      const token = fastify.jwt.sign({ _id: user._id }, { expiresIn: '1d' });
+
+      user.forgotPasswordToken = token;
+      await user.save();
+      
+      const forgotPasswordLink = `${siteOrigin}/recadastrar-senha?token=${token}`;
+      await sendForgotPasswordEmail(user.email, forgotPasswordLink);
+
+      const responseMessage: IResendLinkResponse = {
+        message: 'link para recadastrar senha enviado para o e-mail',
+      };
+
+      return responseMessage;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao enviar link para recadastrar senha',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
+
+  resetPassword: async (fastify: FastifyInstance, resetPasswordBody: IResetPasswordBody): Promise<IResendLinkResponse | IGenericError> => {
+    try {
+      const { token, password } = resetPasswordBody;
+
+      await fastify.jwt.verify(token) as IDecodedToken;
+
+      const user = await UserModel.findOne({
+        forgotPasswordToken: token
+      });
+
+      if (!user) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'usuário não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      user.password = password;
+      user.forgotPasswordToken = null;
+      
+      await user.save();
+
+      const responseMessage: IResendLinkResponse = {
+        message: 'senha resetada com sucesso',
+      };
+
+      return responseMessage;
+    } catch (error) {
+      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'token expirado',
+          statusCode: 401
+        };
+
+        return errorMessage;
+      }
+
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao resetar senha',
         statusCode: 400
       };
 

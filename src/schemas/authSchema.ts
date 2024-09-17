@@ -112,9 +112,52 @@ const authResendLinkSchema = {
   }
 };
 
+const authForgotPasswordSchema = {
+  summary: 'Esqueci a senha',
+  tags: ['auth'],
+  body: z.object({
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+  })
+    .describe(`<pre><code><b>*email:</b> string
+</code></pre>`),
+  response: {
+    200: z.object({
+      message: z.string(genMsgError('message', Type.STRING, Required.TRUE))
+    })
+      .describe(`<pre><code><b>*message:</b> string
+</code></pre>`),
+    400: errorSchema,
+    404: errorSchema
+  }
+};
+
+const authResetPasswordSchema = {
+  summary: 'Resetar senha',
+  tags: ['auth'],
+  body: z.object({
+    token: z.string(genMsgError('token', Type.STRING, Required.TRUE)),
+    password: z.string(genMsgError('password', Type.STRING, Required.TRUE))
+  })
+    .describe(`<pre><code><b>*token:</b> string
+<b>*password:</b> string
+</code></pre>`),
+  response: {
+    200: z.object({
+      message: z.string(genMsgError('message', Type.STRING, Required.TRUE))
+    })
+      .describe(`<pre><code><b>*message:</b> string
+</code></pre>`),
+    400: errorSchema,
+    401: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   authRegisterSchema,
   authLoginSchema,
   authVerifyEmailSchema,
-  authResendLinkSchema
+  authResendLinkSchema,
+  authForgotPasswordSchema,
+  authResetPasswordSchema
 };
