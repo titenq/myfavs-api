@@ -22,6 +22,7 @@ import {
 import siteOrigin from '@/helpers/siteOrigin';
 import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
+import userFolderService from './userFolderService';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -39,6 +40,8 @@ const authService = {
       }
       
       const userCreated: IUserResponse = await UserModel.create(user);
+
+      await userFolderService.createFolderRoot(userCreated._id.toString());
 
       return userCreated;
     } catch (error) {

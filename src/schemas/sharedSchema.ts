@@ -1,3 +1,5 @@
+/* TODO revisar sharedSchema */
+
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 

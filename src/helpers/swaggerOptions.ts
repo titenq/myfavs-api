@@ -1,5 +1,6 @@
 import { FastifySwaggerUiOptions } from '@fastify/swagger-ui';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
+import { nullable } from 'zod';
 
 const fastifySwaggerOptions = {
   swagger: {
@@ -16,10 +17,86 @@ const fastifySwaggerOptions = {
         properties: {
           name: { type: 'string' },
           email: { type: 'string' },
-          picture: { type: 'string' },
+          picture: { type: 'string', nullable: true },
           createdAt: { type: 'string', format: 'date' }
-        }
+        },
+        required: ['name', 'email']
+      },
+      userFolder: {
+        type: 'object',
+        properties: {
+          userId: { type: 'string' },
+          folders: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', minLength: 1, maxLength: 16 },
+                links: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      url: { type: 'string' },
+                      picture: { type: 'string', nullable: true },
+                      description: { type: 'string', nullable: true },
+                      isPrivate: { type: 'boolean', default: false }
+                    },
+                    required: ['url', 'isPrivate']
+                  },
+                  nullable: true
+                },
+                subfolders: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string', minLength: 1, maxLength: 16 },
+                      links: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            url: { type: 'string' },
+                            picture: { type: 'string', nullable: true },
+                            description: { type: 'string', nullable: true },
+                            isPrivate: { type: 'boolean', default: false }
+                          },
+                          required: ['url', 'isPrivate']
+                        },
+                        nullable: true
+                      }
+                    },
+                    required: ['name']
+                  },
+                  nullable: true
+                }
+              },
+              required: ['name']
+            },
+            nullable: true
+          },
+          createdAt: { type: 'string', format: 'date' }
+        },
+        required: ['userId']
       }
+
+      /* 
+      *userId:</b> string
+<b>folders:</b> [
+  <b>*name:</b> string (min: 1, max: 16)
+  <b>links:</b> [
+    <b>*url:</b> string
+    <b>picture:</b> string
+    <b>description:</b> string (max: 64)
+    <b>*isPrivate:</b> boolean (default: false)
+  ]
+  <b>subfolders:</b> [
+    Folder
+  ]
+]
+<b>*createdAt:</b> Date
+      */
     }
   },
   transform: jsonSchemaTransform
