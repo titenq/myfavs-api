@@ -20,6 +20,8 @@ export enum Required {
   NULL
 }
 
+type ValidRequired<T extends Type> = T extends Type.MIN | Type.MAX | Type.LENGTH | Type.EMAIL | Type.DATE ? Required.NULL : T extends Type.STRING | Type.NUMBER | Type.BOOLEAN | Type.UUID | Type.INT | Type.POSITIVE | Type.NONNEGATIVE | Type.URL ? Required.TRUE | Required.FALSE : never;
+
 interface errorMessage {
   required_error?: string;
   invalid_type_error?: string;
@@ -51,7 +53,7 @@ const getMessage = (field: string, type: Type, value?: string) => {
   };
 };
 
-export const genMsgError = (field: string, type: Type, required: Required, value?: string): errorMessage => {
+export const genMsgError = <T extends Type>(field: string, type: T, required: ValidRequired<T>, value?: string): errorMessage => {
   if (required === Required.TRUE) {
     return getRequiredError(field, type);
   }

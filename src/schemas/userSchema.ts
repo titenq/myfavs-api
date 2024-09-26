@@ -15,8 +15,8 @@ const userGetByEmailSchema = {
       _id: z.string(genMsgError('_id', Type.STRING, Required.TRUE)),
       name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-      picture: z.string(genMsgError('picture', Type.STRING, Required.NULL)).nullish(),
-      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
+      picture: z.string(genMsgError('picture', Type.STRING, Required.FALSE)).nullish(),
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
     })
       .describe(`<pre><code><b>*_id:</b> string
 <b>*name:</b> string

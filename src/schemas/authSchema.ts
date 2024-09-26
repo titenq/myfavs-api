@@ -14,7 +14,7 @@ const userResponseSchema = z.object({
   _id: z.instanceof(Object).transform(id => id.toString()),
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
   email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-  createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
+  createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
 });
 
 const authRegisterSchema = {
@@ -53,8 +53,8 @@ const authLoginSchema = {
       _id: z.instanceof(Object).transform(id => id.toString()),
       name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-      picture: z.string(genMsgError('picture', Type.STRING, Required.NULL)).nullish(),
-      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
+      picture: z.string(genMsgError('picture', Type.STRING, Required.FALSE)).nullish(),
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
     })
       .describe(`<pre><code><b>*_id:</b> string
 <b>*name:</b> string
@@ -81,7 +81,7 @@ const authVerifyEmailSchema = {
       _id: z.instanceof(Object).transform(id => id.toString()),
       name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
     })
       .describe(`<pre><code><b>*_id:</b> string
 <b>*name:</b> string

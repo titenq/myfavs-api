@@ -36,7 +36,7 @@ const userFoldersGetByUserIdSchema = {
       _id: _idSchema,
       userId: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
       folders: z.array(folderSchema),
-      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.TRUE))
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
     })
       .describe(`<pre><code><b>*_id:</b> string
 <b>*userId:</b> string
