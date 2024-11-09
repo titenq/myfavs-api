@@ -2,8 +2,7 @@ import mongoose from '@/db';
 
 const LinkSchema = new mongoose.Schema({
   url: {
-    type: String,
-    // required: true
+    type: String
   },
   picture: {
     type: String
@@ -15,12 +14,11 @@ const LinkSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-}, { _id: false });
+});
 
 const FolderSchema = new mongoose.Schema({
   name: {
     type: String,
-    // required: true
   },
   links: {
     type: [LinkSchema],
@@ -30,7 +28,7 @@ const FolderSchema = new mongoose.Schema({
     type: [this],
     default: []
   }
-}, { _id: false });
+});
 
 const UserFolderSchema = new mongoose.Schema({
   userId: {
