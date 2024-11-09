@@ -12,7 +12,6 @@ import jwt from '@fastify/jwt';
 
 import indexRoute from '@/routes/indexRoute';
 import apiBaseUrl from '@/helpers/apiBaseUrl';
-import pingEndpoint from '@/helpers/pingEndpoint';
 import errorHandler from '@/helpers/errorHandler';
 import siteOrigin from '@/helpers/siteOrigin';
 import { fastifySwaggerOptions, fastifySwaggerUiOptions } from '@/helpers/swaggerOptions';
@@ -61,8 +60,6 @@ const startServer = async () => {
     port: Number(PORT),
     host: '0.0.0.0'
   });
-
-  pingEndpoint();
 };
 
 try {
