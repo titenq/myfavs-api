@@ -59,6 +59,48 @@ const userFoldersGetByUserIdSchema = {
   }
 };
 
+const createFolderSchema = {
+  summary: 'Criar pasta',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    name: z.string(genMsgError('name', Type.STRING, Required.TRUE))
+      .min(1, genMsgError('name', Type.MIN, Required.NULL, '1'))
+      .max(16, genMsgError('name', Type.MAX, Required.NULL, '16'))
+      .describe('<pre><code><b>*name:</b> string (min: 1, max: 16)</code></pre>')
+  }),
+  response: {
+    201: z.object({
+      _id: _idSchema,
+      userId: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
+      folders: z.array(folderSchema),
+      createdAt: z.date(genMsgError('createdAt', Type.DATE, Required.NULL))
+    })
+      .describe(`<pre><code><b>*_id:</b> string
+<b>*userId:</b> string
+<b>folders:</b> [
+  <b>*name:</b> string (min: 1, max: 16)
+  <b>links:</b> [
+    <b>*url:</b> string
+    <b>picture:,/b> string
+    <b>description:</b> string (max: 64)
+    <b>*isPrivate:</b> boolean (default: false)
+  ]
+  <b>subfolders:</b> [
+    Folder
+  ]
+]
+<b>*createdAt:</b> Date
+</code></pre>`),
+    400: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
-  userFoldersGetByUserIdSchema
+  userFoldersGetByUserIdSchema,
+  createFolderSchema
 };

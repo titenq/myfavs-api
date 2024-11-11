@@ -28,8 +28,8 @@ const userFolderService = {
       return errorMessage;
     }
   },
-
-  createFolderRoot: async (userId: string) => {
+  
+  createFolderRoot: async (userId: string): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const rootFolder: IUserFolderCreateRoot = {
         userId,
@@ -54,7 +54,7 @@ const userFolderService = {
         return errorMessage;
       }
 
-      return response;
+      return response.toObject() as IUserFolderResponse;
     } catch (error) {
       const errorMessage: IGenericError = {
         error: true,
@@ -66,21 +66,38 @@ const userFolderService = {
     }
   },
 
-  createFolder: async (userId: string, folderName: string) => {
-    const userFolders = await UserFolderModel.findOne({ userId });
+  createFolder: async (userId: string, folderName: string): Promise<IUserFolderResponse | IGenericError> => {
+    try {
+      const userFolders = await UserFolderModel.findOne({ userId });
 
-    if (!userFolders) {
-      throw new Error('User folders not found');
+      if (!userFolders) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'userId não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      userFolders.folders.push({
+        name: folderName,
+        links: [],
+        subfolders: []
+      });
+
+      const response = await userFolders.save();
+
+      return response.toObject() as IUserFolderResponse;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao criar pasta',
+        statusCode: 400
+      };
+
+      return errorMessage;
     }
-
-    userFolders.folders.push({
-      name: folderName,
-      links: [],
-      subfolders: []
-    });
-
-    return await userFolders.save();
-  }
-};
+  }};
 
 export default userFolderService;

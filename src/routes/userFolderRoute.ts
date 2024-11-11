@@ -1,8 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import { userFoldersGetByUserIdSchema } from '@/schemas/userFolderSchema';
-import { getFoldersByUserIdController } from '@/controllers/userFolderController';
+import {
+  createFolderSchema,
+  userFoldersGetByUserIdSchema
+} from '@/schemas/userFolderSchema';
+import {
+  createFolderController,
+  getFoldersByUserIdController
+} from '@/controllers/userFolderController';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>()
@@ -11,12 +17,11 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
       getFoldersByUserIdController
     );
   
-  /* fastify.withTypeProvider<ZodTypeProvider>()
+  fastify.withTypeProvider<ZodTypeProvider>()
     .post('/folders/:userId',
-      // { schema: userFoldersGetByUserIdSchema },
-      { schema: { hide: true }},
+      { schema: createFolderSchema },
       createFolderController
-    ); */
+    );
 };
 
 export default userFolderRoute;

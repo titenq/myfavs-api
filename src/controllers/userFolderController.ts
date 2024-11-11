@@ -32,28 +32,23 @@ export const getFoldersByUserIdController = async (
   }
 };
 
-/* export const createFolderController = async (
-  request: FastifyRequest<{ Params: { userId: string } }>,
+export const createFolderController = async (
+  request: FastifyRequest<{ Params: { userId: string }, Body: { name: string } }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId } = request.params;
+    const { name } = request.body;
+    
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, name);
 
-    const user: IUserFolderResponse | IGenericError = await userFolderService.getFoldersByUserId(userId);
-
-    if (!user) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao buscar usuário',
-        statusCode: 404
-      };
-
-      errorHandler(errorMessage, request, reply);
+    if ('error' in response) {
+      errorHandler(response, request, reply);
 
       return;
     }
 
-    reply.status(200).send(user);
+    reply.status(201).send(response);
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
@@ -63,4 +58,4 @@ export const getFoldersByUserIdController = async (
 
     errorHandler(errorMessage, request, reply);
   }
-}; */
+};
