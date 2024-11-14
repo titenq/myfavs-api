@@ -33,27 +33,52 @@ export const getFoldersByUserIdController = async (
 };
 
 export const createFolderController = async (
-  request: FastifyRequest<{ Params: { userId: string }, Body: { name: string } }>,
+  request: FastifyRequest<{ Params: { userId: string }, Body: { folderName: string } }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId } = request.params;
-    const { name } = request.body;
+    const { folderName } = request.body;
     
-    const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, name);
+    const token = request.cookies.token;
 
-    if ('error' in response) {
-      errorHandler(response, request, reply);
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
 
+      errorHandler(errorMessage, request, reply);
       return;
     }
 
-    reply.status(201).send(response);
+    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+    
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, folderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      return;
+    }
+
+    reply.status(204).send();
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao buscar usuário',
-      statusCode: 500,
+      statusCode: 500
     };
 
     errorHandler(errorMessage, request, reply);

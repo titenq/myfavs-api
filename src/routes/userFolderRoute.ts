@@ -19,7 +19,9 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   
   fastify.withTypeProvider<ZodTypeProvider>()
     .post('/folders/:userId',
-      { schema: createFolderSchema },
+      {
+        schema: createFolderSchema
+      },
       createFolderController
     );
 };

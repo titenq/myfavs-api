@@ -5,7 +5,13 @@ import UserFolderModel from '@/models/UserFolderModel';
 const userFolderService = {
   getFoldersByUserId: async (userId: string): Promise<IUserFolderResponse | IGenericError> => {
     try {
-      const response: IUserFolderResponse | null = await UserFolderModel.findOne({ userId });
+      const response: IUserFolderResponse | null = await UserFolderModel
+        .findOne({ userId })
+        .lean();
+      
+      if (response && response.folders) {
+        response.folders.sort((a, b) => a.name.localeCompare(b.name));
+      }
 
       if (!response) {
         const errorMessage: IGenericError = {
