@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-interface ILink {
+export interface ILink {
   url: string;
   picture?: string | null;
   description?: string | null;

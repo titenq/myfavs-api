@@ -1,5 +1,5 @@
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IUserFolderCreateRoot, IUserFolderResponse } from '@/interfaces/userFolderInterface';
+import { ILink, IUserFolderCreateRoot, IUserFolderResponse } from '@/interfaces/userFolderInterface';
 import UserFolderModel from '@/models/UserFolderModel';
 
 const userFolderService = {
@@ -104,6 +104,39 @@ const userFolderService = {
 
       return errorMessage;
     }
-  }};
+  },
+
+  createLink: async (userId: string, link: ILink, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
+    try {
+      const userFolders = await UserFolderModel.findOneAndUpdate(
+        { userId, 'folders._id': folderId },
+        { $push: { 'folders.$.links': link } },
+        { new: true }
+      );
+
+      if (!userFolders) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'userId não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      const response = await userFolders.save();
+
+      return response.toObject() as IUserFolderResponse;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao criar link',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
+};
 
 export default userFolderService;
