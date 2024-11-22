@@ -27,6 +27,7 @@
     "fastify-type-provider-zod": "^2.0.0",
     "mongoose": "^8.5.3",
     "nodemailer": "^6.9.14",
+    "puppeteer": "^23.9.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

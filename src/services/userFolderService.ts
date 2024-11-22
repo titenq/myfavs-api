@@ -1,6 +1,15 @@
+import { Types } from 'mongoose';
+
+import takeScreenshot from '@/helpers/takeScreenshot';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { ILink, IUserFolderCreateRoot, IUserFolderResponse } from '@/interfaces/userFolderInterface';
+import {
+  ILink,
+  IUserFolderCreateRoot,
+  IUserFolderResponse
+} from '@/interfaces/userFolderInterface';
 import UserFolderModel from '@/models/UserFolderModel';
+
+const { ObjectId } = Types;
 
 const userFolderService = {
   getFoldersByUserId: async (userId: string): Promise<IUserFolderResponse | IGenericError> => {
@@ -108,6 +117,9 @@ const userFolderService = {
 
   createLink: async (userId: string, link: ILink, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
     try {
+      const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
+      link.picture = screenshotPath;
+      
       const userFolders = await UserFolderModel.findOneAndUpdate(
         { userId, 'folders._id': folderId },
         { $push: { 'folders.$.links': link } },
