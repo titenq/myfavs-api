@@ -9,6 +9,7 @@ import {
 import {
   createFolderController,
   createLinkController,
+  createSubfolderController,
   getFoldersByUserIdController
 } from '@/controllers/userFolderController';
 
@@ -33,6 +34,15 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
         schema: createLinkSchema
       },
       createLinkController
+    );
+
+  fastify.withTypeProvider<ZodTypeProvider>()
+    .post('/folders/:userId/subfolders/:folderId',
+      {
+        // schema: createSubfolderSchema
+        schema: { hide: true }
+      },
+      createSubfolderController
     );
 };
 

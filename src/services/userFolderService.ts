@@ -8,6 +8,7 @@ import {
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 import UserFolderModel from '@/models/UserFolderModel';
+import { create } from 'axios';
 
 const { ObjectId } = Types;
 
@@ -140,6 +141,7 @@ const userFolderService = {
 
       return response.toObject() as IUserFolderResponse;
     } catch (error) {
+      console.log(error)
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao criar link',
@@ -149,6 +151,38 @@ const userFolderService = {
       return errorMessage;
     }
   },
+
+  createSubfolder: async (userId: string, subfolderName: string, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
+    try {
+      const userFolders = await UserFolderModel.findOneAndUpdate(
+        { userId, 'folders._id': folderId },
+        { $push: { 'folders.$.subfolders': { name: subfolderName, links: [], subfolders: [] } } },
+        { new: true }
+      );
+
+      if (!userFolders) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'userId não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      const response = await userFolders.save();
+
+      return response.toObject() as IUserFolderResponse;
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao criar subpasta',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  }
 };
 
 export default userFolderService;

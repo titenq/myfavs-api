@@ -2,6 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 import puppeteer from 'puppeteer';
+import sharp from 'sharp';
 
 const takeScreenshot = async (url: string, linkId: string) => {
   const browser = await puppeteer.launch();
@@ -14,7 +15,7 @@ const takeScreenshot = async (url: string, linkId: string) => {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
-  const filename = `${linkId}-${Date.now()}.png`;
+  const filename = `${linkId}-${Date.now()}.jpg`;
   const filepath = path.join(uploadsDir, filename);
 
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -26,8 +27,10 @@ const takeScreenshot = async (url: string, linkId: string) => {
     height: 768
   });
 
+  const tempPath = `${filepath}-temp.jpg`;
+
   await page.screenshot({
-    path: filepath,
+    path: tempPath,
     fullPage: false,
     clip: {
       x: 0,
@@ -37,6 +40,16 @@ const takeScreenshot = async (url: string, linkId: string) => {
     }
   });
 
+  await sharp(tempPath)
+    .resize(280, 210, {
+      fit: 'contain',
+      background: { r: 255, g: 255, b: 255 }
+    })
+    .jpeg({ quality: 60})
+    .toFile(filepath);
+  
+  fs.unlinkSync(tempPath);
+  
   await browser.close();
 
   return `/uploads/pictures/${filename}`;

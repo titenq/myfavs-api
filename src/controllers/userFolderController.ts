@@ -39,7 +39,7 @@ export const createFolderController = async (
   try {
     const { userId } = request.params;
     const { folderName } = request.body;
-    
+
     const token = request.cookies.token;
 
     if (!token) {
@@ -65,7 +65,7 @@ export const createFolderController = async (
       errorHandler(errorMessage, request, reply);
       return;
     }
-    
+
     const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, folderName);
 
     if ('error' in response) {
@@ -94,7 +94,7 @@ export const createLinkController = async (
     const link = request.body;
 
     link.isPrivate = String(link.isPrivate) === 'true';
-    
+
     const token = request.cookies.token;
 
     if (!token) {
@@ -120,8 +120,68 @@ export const createLinkController = async (
       errorHandler(errorMessage, request, reply);
       return;
     }
-    
+
     const response: IUserFolderResponse | IGenericError = await userFolderService.createLink(userId, link, folderId);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      return;
+    }
+
+    reply.status(204).send();
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao criar link',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const createSubfolderController = async (
+  request: FastifyRequest<{
+    Params: {
+      userId: string, folderId: string
+    },
+    Body: {
+      subfolderName: string
+    }
+  }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId, folderId } = request.params;
+    const { subfolderName } = request.body;
+
+    const token = request.cookies.token;
+
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createSubfolder(userId, subfolderName, folderId);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
