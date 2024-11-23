@@ -133,7 +133,7 @@ export const createLinkController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao criar link',
-      statusCode: 500
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);

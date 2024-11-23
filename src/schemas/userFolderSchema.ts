@@ -83,7 +83,39 @@ const createFolderSchema = {
   }
 };
 
+const createLinkSchema = {
+  summary: 'Criar link',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>'),
+    folderId: z.string(genMsgError('folderId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*folderId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    url: z.string(genMsgError('url', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*url:</b> string</code></pre>'),
+    description: z.string(genMsgError('description', Type.STRING, Required.FALSE))
+      .max(64, genMsgError('description', Type.MAX, Required.NULL, '64'))
+      .describe('<pre><code><b>description:</b> string (max: 64)</code></pre>')
+      .nullish(),
+    isPrivate: z.string(genMsgError('isPrivate', Type.BOOLEAN, Required.TRUE))
+      .transform(val => val === 'true')
+      .describe('<pre><code><b>*isPrivate:</b> boolean (default: false)</code></pre>')
+  }),
+  response: {
+    204: {
+      type: 'null',
+      description: 'link criado com sucesso'
+    },
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
-  createFolderSchema
+  createFolderSchema,
+  createLinkSchema
 };
