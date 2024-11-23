@@ -4,6 +4,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
   createFolderSchema,
   createLinkSchema,
+  createSubfolderSchema,
   userFoldersGetByUserIdSchema
 } from '@/schemas/userFolderSchema';
 import {
@@ -39,8 +40,7 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>()
     .post('/folders/:userId/subfolders/:folderId',
       {
-        // schema: createSubfolderSchema
-        schema: { hide: true }
+        schema: createSubfolderSchema
       },
       createSubfolderController
     );

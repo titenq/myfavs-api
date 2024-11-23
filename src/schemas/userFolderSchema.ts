@@ -114,8 +114,35 @@ const createLinkSchema = {
   }
 };
 
+const createSubfolderSchema = {
+  summary: 'Criar subpasta',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>'),
+    folderId: z.string(genMsgError('folderId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*folderId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    folderName: z.string(genMsgError('folderName', Type.STRING, Required.TRUE))
+      .min(1, genMsgError('folderName', Type.MIN, Required.NULL, '1'))
+      .max(16, genMsgError('folderName', Type.MAX, Required.NULL, '16'))
+      .describe('<pre><code><b>*folderName:</b> string (min: 1, max: 16)</code></pre>')
+  }),
+  response: {
+    204: {
+      type: 'null',
+      description: 'subpasta criada com sucesso'
+    },
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
   createFolderSchema,
-  createLinkSchema
+  createLinkSchema,
+  createSubfolderSchema
 };
