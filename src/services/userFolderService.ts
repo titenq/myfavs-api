@@ -8,7 +8,6 @@ import {
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 import UserFolderModel from '@/models/UserFolderModel';
-import { create } from 'axios';
 
 const { ObjectId } = Types;
 
@@ -119,6 +118,11 @@ const userFolderService = {
   createLink: async (userId: string, link: ILink, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
+
+      if (typeof screenshotPath === 'object' && 'error' in screenshotPath) {
+        return screenshotPath;
+      }
+
       link.picture = screenshotPath;
       
       const userFolders = await UserFolderModel.findOneAndUpdate(

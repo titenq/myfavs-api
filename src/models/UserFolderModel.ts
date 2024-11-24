@@ -2,7 +2,8 @@ import mongoose from '@/db';
 
 const LinkSchema = new mongoose.Schema({
   url: {
-    type: String
+    type: String,
+    required: true
   },
   picture: {
     type: String
