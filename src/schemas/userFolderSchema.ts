@@ -74,10 +74,7 @@ const createFolderSchema = {
       .describe('<pre><code><b>*folderName:</b> string (min: 1, max: 16)</code></pre>')
   }),
   response: {
-    204: {
-      type: 'null',
-      description: 'pasta criada com sucesso'
-    },
+    204: z.null(),
     400: errorSchema,
     404: errorSchema
   }
@@ -104,10 +101,7 @@ const createLinkSchema = {
       .describe('<pre><code><b>*isPrivate:</b> boolean (default: false)</code></pre>')
   }),
   response: {
-    204: {
-      type: 'null',
-      description: 'link criado com sucesso'
-    },
+    204: z.null(),
     400: errorSchema,
     403: errorSchema,
     404: errorSchema
@@ -130,10 +124,7 @@ const createSubfolderSchema = {
       .describe('<pre><code><b>*folderName:</b> string (min: 1, max: 16)</code></pre>')
   }),
   response: {
-    204: {
-      type: 'null',
-      description: 'subpasta criada com sucesso'
-    },
+    204: z.null(),
     400: errorSchema,
     403: errorSchema,
     404: errorSchema

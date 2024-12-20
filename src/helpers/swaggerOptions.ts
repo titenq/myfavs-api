@@ -1,6 +1,5 @@
 import { FastifySwaggerUiOptions } from '@fastify/swagger-ui';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
-import { nullable } from 'zod';
 
 const fastifySwaggerOptions = {
   swagger: {
