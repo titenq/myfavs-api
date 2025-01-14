@@ -186,7 +186,62 @@ const userFolderService = {
 
       return errorMessage;
     }
-  }
+  },
+
+  createLinkSubfolder: async (userId: string, link: ILink, folderId: string, subfolderName: string): Promise<IUserFolderResponse | IGenericError> => {
+    try {
+      const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
+
+      if (typeof screenshotPath === 'object' && 'error' in screenshotPath) {
+        return screenshotPath;
+      }
+
+      link.picture = screenshotPath;
+
+      const userFolders = await UserFolderModel.findOneAndUpdate(
+        {
+          userId,
+          'folders._id': folderId,
+          'folders.subfolders.name': subfolderName
+        },
+        {
+          $push: {
+            'folders.$[folder].subfolders.$[subfolder].links': link
+          }
+        },
+        {
+          arrayFilters: [
+            { 'folder._id': folderId },
+            { 'subfolder.name': subfolderName }
+          ],
+          new: true
+        }
+      );
+
+      if (!userFolders) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'userId não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      const response = await userFolders.save();
+
+      return response.toObject() as IUserFolderResponse;
+    } catch (error) {
+      console.log(error)
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao criar link',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
 };
 
 export default userFolderService;

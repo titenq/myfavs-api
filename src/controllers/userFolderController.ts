@@ -3,7 +3,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import errorHandler from '@/helpers/errorHandler';
 import { IGenericError } from '@/interfaces/errorInterface';
 import userFolderService from '@/services/userFolderService';
-import { ILink, IUserFolderResponse } from '@/interfaces/userFolderInterface';
+import { ILink, ILinkFolderParams, ILinkSubfolderParams, IUserFolderResponse } from '@/interfaces/userFolderInterface';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{ Params: { userId: string } }>,
@@ -86,7 +86,7 @@ export const createFolderController = async (
 };
 
 export const createLinkController = async (
-  request: FastifyRequest<{ Params: { userId: string, folderId: string }, Body: ILink }>,
+  request: FastifyRequest<{ Params: ILinkFolderParams, Body: ILink }>,
   reply: FastifyReply
 ) => {
   try {
@@ -142,9 +142,7 @@ export const createLinkController = async (
 
 export const createSubfolderController = async (
   request: FastifyRequest<{
-    Params: {
-      userId: string, folderId: string
-    },
+    Params: ILinkSubfolderParams,
     Body: {
       subfolderName: string
     }
@@ -193,6 +191,61 @@ export const createSubfolderController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao criar link',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const createLinkSubfolderController = async (
+  request: FastifyRequest<{ Params: ILinkSubfolderParams, Body: ILink }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId, folderId, subfolderName } = request.params;
+    const link = request.body;
+
+    link.isPrivate = String(link.isPrivate) === 'true';
+
+    const token = request.cookies.token;
+
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createLinkSubfolder(userId, link, folderId, subfolderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      return;
+    }
+
+    reply.status(204).send();
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao criar link na subpasta',
       statusCode: 400
     };
 

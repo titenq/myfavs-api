@@ -24,3 +24,14 @@ export type IUserFolderCreateRoot = Omit<IUserFolder, 'createdAt'>;
 export interface IUserFolderResponse extends IUserFolder {
   _id: Types.ObjectId;
 }
+
+export interface ILinkFolderParams {
+  userId: string;
+  folderId: string;
+}
+
+export interface ILinkSubfolderParams {
+  userId: string;
+  folderId: string;
+  subfolderName: string;
+}
