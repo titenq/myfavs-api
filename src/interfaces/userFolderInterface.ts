@@ -35,3 +35,11 @@ export interface ILinkSubfolderParams {
   folderId: string;
   subfolderName: string;
 }
+
+export interface IDeleteLinkBody {
+  folderId: string | null;
+  subfolderName: string | null;
+  linkId: string | null;
+  linkUrl: string;
+  linkPicture: string | null;
+}

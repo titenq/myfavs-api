@@ -1,8 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { Types } from 'mongoose';
 
 import takeScreenshot from '@/helpers/takeScreenshot';
 import { IGenericError } from '@/interfaces/errorInterface';
 import {
+  IDeleteLinkBody,
   ILink,
   IUserFolderCreateRoot,
   IUserFolderResponse
@@ -188,7 +192,7 @@ const userFolderService = {
     }
   },
 
-  createLinkSubfolder: async (userId: string, link: ILink, folderId: string, subfolderName: string): Promise<IUserFolderResponse | IGenericError> => {
+  createLinkSubfolder: async (userId: string, link: ILink, folderId: string, subfolderName: string): Promise<{ picture: string } | IGenericError> => {
     try {
       const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
 
@@ -228,14 +232,68 @@ const userFolderService = {
         return errorMessage;
       }
 
-      const response = await userFolders.save();
+      await userFolders.save();
 
-      return response.toObject() as IUserFolderResponse;
+      return { picture: screenshotPath };
     } catch (error) {
-      console.log(error)
       const errorMessage: IGenericError = {
         error: true,
         message: 'erro ao criar link',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
+
+  deleteLink: async (userId: string, deleteLinkBody: IDeleteLinkBody): Promise<{ delete: true} | IGenericError> => {
+    try {
+      const { folderId, subfolderName, linkUrl, linkPicture } = deleteLinkBody;
+
+      if (linkPicture) {
+        const imagePath = path.join(process.cwd(), linkPicture);
+
+        fs.unlinkSync(imagePath);
+      }
+
+      if (!subfolderName) {
+        await UserFolderModel.updateOne(
+          { 
+            userId,
+            'folders._id': folderId
+          },
+          { 
+            $pull: { 
+              'folders.$.links': { url: linkUrl } 
+            } 
+          }
+        );
+      } else {
+        await UserFolderModel.updateOne(
+          { 
+            userId,
+            'folders._id': folderId,
+            'folders.subfolders.name': subfolderName
+          },
+          { 
+            $pull: { 
+              'folders.$[folder].subfolders.$[subfolder].links': { url: linkUrl }
+            }
+          },
+          {
+            arrayFilters: [
+              { 'folder._id': folderId },
+              { 'subfolder.name': subfolderName }
+            ]
+          }
+        );
+      }
+
+      return { delete: true };
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao deletar link',
         statusCode: 400
       };
 

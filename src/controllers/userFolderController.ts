@@ -3,7 +3,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import errorHandler from '@/helpers/errorHandler';
 import { IGenericError } from '@/interfaces/errorInterface';
 import userFolderService from '@/services/userFolderService';
-import { ILink, ILinkFolderParams, ILinkSubfolderParams, IUserFolderResponse } from '@/interfaces/userFolderInterface';
+import { IDeleteLinkBody, ILink, ILinkFolderParams, ILinkSubfolderParams, IUserFolderResponse } from '@/interfaces/userFolderInterface';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{ Params: { userId: string } }>,
@@ -92,9 +92,6 @@ export const createLinkController = async (
   try {
     const { userId, folderId } = request.params;
     const link = request.body;
-
-    link.isPrivate = String(link.isPrivate) === 'true';
-
     const token = request.cookies.token;
 
     if (!token) {
@@ -205,9 +202,6 @@ export const createLinkSubfolderController = async (
   try {
     const { userId, folderId, subfolderName } = request.params;
     const link = request.body;
-
-    link.isPrivate = String(link.isPrivate) === 'true';
-
     const token = request.cookies.token;
 
     if (!token) {
@@ -218,6 +212,7 @@ export const createLinkSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -231,10 +226,63 @@ export const createLinkSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.createLinkSubfolder(userId, link, folderId, subfolderName);
+    const response: { picture: string } | IGenericError = await userFolderService.createLinkSubfolder(userId, link, folderId, subfolderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao criar link na subpasta',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const deleteLinkController = async (
+  request: FastifyRequest<{ Params: { userId: string }, Body: IDeleteLinkBody }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId } = request.params;
+    const token = request.cookies.token;
+
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const decodedToken = request.server.jwt.verify<{ _id: string }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const response: { delete: boolean } | IGenericError = await userFolderService.deleteLink(userId, request.body);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -245,7 +293,7 @@ export const createLinkSubfolderController = async (
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'erro ao criar link na subpasta',
+      message: 'erro ao deletar link',
       statusCode: 400
     };
 

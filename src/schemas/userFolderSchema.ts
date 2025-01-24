@@ -96,8 +96,7 @@ const createLinkSchema = {
       .max(64, genMsgError('description', Type.MAX, Required.NULL, '64'))
       .describe('<pre><code><b>description:</b> string (max: 64)</code></pre>')
       .nullish(),
-    isPrivate: z.string(genMsgError('isPrivate', Type.BOOLEAN, Required.TRUE))
-      .transform(val => val === 'true')
+    isPrivate: z.boolean(genMsgError('isPrivate', Type.BOOLEAN, Required.TRUE))
       .describe('<pre><code><b>*isPrivate:</b> boolean (default: false)</code></pre>')
   }),
   response: {
@@ -149,12 +148,14 @@ const createLinkSubfolderSchema = {
       .max(64, genMsgError('description', Type.MAX, Required.NULL, '64'))
       .describe('<pre><code><b>description:</b> string (max: 64)</code></pre>')
       .nullish(),
-    isPrivate: z.string(genMsgError('isPrivate', Type.BOOLEAN, Required.TRUE))
-      .transform(val => val === 'true')
+    isPrivate: z.boolean(genMsgError('isPrivate', Type.BOOLEAN, Required.TRUE))
       .describe('<pre><code><b>*isPrivate:</b> boolean (default: false)</code></pre>')
   }),
   response: {
-    204: z.null(),
+    200: z.object({
+      picture: z.string(genMsgError('picture', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*picture:</b> string</code></pre>')
+    }),
     400: errorSchema,
     403: errorSchema,
     404: errorSchema
