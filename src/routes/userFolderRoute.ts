@@ -6,6 +6,7 @@ import {
   createLinkSchema,
   createLinkSubfolderSchema,
   createSubfolderSchema,
+  deleteLinkSchema,
   userFoldersGetByUserIdSchema
 } from '@/schemas/userFolderSchema';
 import {
@@ -59,8 +60,7 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   fastify.withTypeProvider<ZodTypeProvider>()
     .delete('/folders/:userId/link',
       {
-        // schema: deleteLinkSchema
-        schema: { hide: true }
+        schema: deleteLinkSchema
       },
       deleteLinkController
     );

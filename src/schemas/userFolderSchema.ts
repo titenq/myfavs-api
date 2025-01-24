@@ -162,10 +162,44 @@ const createLinkSubfolderSchema = {
   }
 };
 
+const deleteLinkSchema = {
+  summary: 'Deletar link',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    folderId: z.string(genMsgError('folderId', Type.STRING, Required.TRUE))
+      .nullable()
+      .describe('<pre><code><b>folderId:</b> string | null</code></pre>'),
+    subfolderName: z.string(genMsgError('subfolderName', Type.STRING, Required.TRUE))
+      .nullable()
+      .describe('<pre><code><b>subfolderName:</b> string | null</code></pre>'),
+    linkId: z.string(genMsgError('linkId', Type.STRING, Required.TRUE))
+      .nullable()
+      .describe('<pre><code><b>linkId:</b> string | null</code></pre>'),
+    linkUrl: z.string(genMsgError('linkUrl', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>linkUrl:</b> string</code></pre>'),
+    linkPicture: z.string(genMsgError('linkPicture', Type.STRING, Required.TRUE))
+      .nullable()
+      .describe('<pre><code><b>linkPicture:</b> string | null</code></pre>')
+  }),  response: {
+    200: z.object({
+      picture: z.string(genMsgError('picture', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*picture:</b> string</code></pre>')
+    }),
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
   createFolderSchema,
   createLinkSchema,
   createSubfolderSchema,
-  createLinkSubfolderSchema
+  createLinkSubfolderSchema,
+  deleteLinkSchema
 };
