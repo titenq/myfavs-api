@@ -15,6 +15,7 @@ import {
   createLinkSubfolderController,
   createSubfolderController,
   deleteLinkController,
+  editFolderController,
   getFoldersByUserIdController
 } from '@/controllers/userFolderController';
 
@@ -55,7 +56,7 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
         schema: createLinkSubfolderSchema
       },
       createLinkSubfolderController
-  );
+    );
   
   fastify.withTypeProvider<ZodTypeProvider>()
     .delete('/folders/:userId/link',
@@ -63,6 +64,15 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
         schema: deleteLinkSchema
       },
       deleteLinkController
+    );
+  
+  fastify.withTypeProvider<ZodTypeProvider>()
+    .put('/folders/:userId',
+      {
+        // schema: editFolderSchema
+        schema: { hide: true }
+      },
+      editFolderController
     );
 };
 

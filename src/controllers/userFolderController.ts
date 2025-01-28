@@ -300,3 +300,56 @@ export const deleteLinkController = async (
     errorHandler(errorMessage, request, reply);
   }
 };
+
+export const editFolderController = async (
+  request: FastifyRequest<{ Params: { userId: string }, Body: { editFolderId: string, editFolderName: string } }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId } = request.params;
+    const { editFolderId, editFolderName } = request.body;
+
+    const token = request.cookies.token;
+
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const response: { ok: true } | IGenericError = await userFolderService.editFolder(userId, editFolderId, editFolderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      return;
+    }
+
+    reply.status(204).send();
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao editar pasta',
+      statusCode: 500
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};

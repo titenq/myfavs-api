@@ -300,6 +300,43 @@ const userFolderService = {
       return errorMessage;
     }
   },
+
+  editFolder: async (userId: string, editFolderId: string, editFolderName: string): Promise<{ ok: true } | IGenericError> => {
+    try {
+      const userFolders = await UserFolderModel.findOneAndUpdate(
+        {
+          userId,
+          'folders._id': editFolderId
+        },
+        {
+          $set: {
+            'folders.$.name': editFolderName
+          }
+        },
+        { new: true }
+      );
+
+      if (!userFolders) {
+        const errorMessage: IGenericError = {
+          error: true,
+          message: 'userId não encontrado',
+          statusCode: 404
+        };
+
+        return errorMessage;
+      }
+
+      return { ok: true };
+    } catch (error) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao editar pasta',
+        statusCode: 400
+      };
+
+      return errorMessage;
+    }
+  },
 };
 
 export default userFolderService;
