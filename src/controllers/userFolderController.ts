@@ -347,7 +347,7 @@ export const editFolderController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao editar pasta',
-      statusCode: 500
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);

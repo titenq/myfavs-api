@@ -195,11 +195,35 @@ const deleteLinkSchema = {
   }
 };
 
+const editFolderSchema = {
+  summary: 'Editar nome da pasta',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    editFolderId: z.string(genMsgError('editFolderId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*editFolderId:</b> string</code></pre>'),
+    editFolderName: z.string(genMsgError('editFolderName', Type.STRING, Required.TRUE))
+      .min(1, genMsgError('editFolderName', Type.MIN, Required.NULL, '1'))
+      .max(16, genMsgError('editFolderName', Type.MAX, Required.NULL, '16'))
+      .describe('<pre><code><b>*editFolderName:</b> string (min: 1, max: 16)</code></pre>')
+  }),
+  response: {
+    204: z.null(),
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
   createFolderSchema,
   createLinkSchema,
   createSubfolderSchema,
   createLinkSubfolderSchema,
-  deleteLinkSchema
+  deleteLinkSchema,
+  editFolderSchema
 };
