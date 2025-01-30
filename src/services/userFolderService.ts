@@ -337,6 +337,58 @@ const userFolderService = {
       return errorMessage;
     }
   },
+
+  deleteFolder: async (userId: string, deleteFolderId: string): Promise<{ delete: true } | IGenericError> => {
+    try {
+      const userFolder = await UserFolderModel.findOne({ 
+        userId,
+        'folders._id': deleteFolderId 
+      });
+
+      if (!userFolder) {
+        return {
+          error: true,
+          message: 'Pasta não encontrada',
+          statusCode: 404
+        };
+      }
+
+      const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId);
+
+      if (folder) {
+        folder.links.forEach(link => {
+          if (link.picture) {
+            const imagePath = path.join(process.cwd(), link.picture);
+
+            fs.unlinkSync(imagePath);
+          }
+        });
+
+        folder.subfolders?.forEach((subfolder: any) => {
+          subfolder.links?.forEach((link: any) => {
+            if (link.picture) {
+              const imagePath = path.join(process.cwd(), link.picture);
+
+              fs.unlinkSync(imagePath);
+            }
+          });
+        });
+      }
+
+      await UserFolderModel.updateOne(
+        { userId },
+        { $pull: { folders: { _id: deleteFolderId } } }
+      );
+
+      return { delete: true };
+    } catch (error) {
+      return {
+        error: true,
+        message: 'erro ao deletar pasta',
+        statusCode: 400
+      };
+    }
+  },
 };
 
 export default userFolderService;
