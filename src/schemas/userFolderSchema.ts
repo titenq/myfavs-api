@@ -218,6 +218,25 @@ const editFolderSchema = {
   }
 };
 
+const deleteFolderSchema = {
+  summary: 'Deletar pasta',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>')
+  }),
+  body: z.object({
+    deleteFolderId: z.string(genMsgError('deleteFolderId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*deleteFolderId:</b> string</code></pre>')
+  }),
+  response: {
+    204: z.null(),
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
   createFolderSchema,
@@ -225,5 +244,6 @@ export {
   createSubfolderSchema,
   createLinkSubfolderSchema,
   deleteLinkSchema,
-  editFolderSchema
+  editFolderSchema,
+  deleteFolderSchema
 };
