@@ -79,23 +79,6 @@ const fastifySwaggerOptions = {
         },
         required: ['userId']
       }
-
-      /* 
-      *userId:</b> string
-<b>folders:</b> [
-  <b>*name:</b> string (min: 1, max: 16)
-  <b>links:</b> [
-    <b>*url:</b> string
-    <b>picture:</b> string
-    <b>description:</b> string (max: 64)
-    <b>*isPrivate:</b> boolean (default: false)
-  ]
-  <b>subfolders:</b> [
-    Folder
-  ]
-]
-<b>*createdAt:</b> Date
-      */
     }
   },
   transform: jsonSchemaTransform
