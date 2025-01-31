@@ -9,6 +9,7 @@ import UserFolderModel from '@/models/UserFolderModel';
 import {
   IDeleteLinkBody,
   IEditSubfolderRequest,
+  IFolder,
   ILink,
   IUserFolderCreateRoot,
   IUserFolderResponse
@@ -354,10 +355,10 @@ const userFolderService = {
         };
       }
 
-      const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId);
+      const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
 
-      if (folder) {
-        folder.links.forEach(link => {
+      if (folder && folder.links) {
+        folder.links.forEach((link: ILink) => {
           if (link.picture) {
             const imagePath = path.join(process.cwd(), link.picture);
 
@@ -365,8 +366,8 @@ const userFolderService = {
           }
         });
 
-        folder.subfolders?.forEach((subfolder: any) => {
-          subfolder.links?.forEach((link: any) => {
+        folder.subfolders?.forEach((subfolder: IFolder) => {
+          subfolder.links?.forEach((link: ILink) => {
             if (link.picture) {
               const imagePath = path.join(process.cwd(), link.picture);
 
