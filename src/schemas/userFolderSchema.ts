@@ -237,6 +237,31 @@ const deleteFolderSchema = {
   }
 };
 
+const editSubfolderSchema = {
+  summary: 'Editar nome da subpasta',
+  tags: ['userFolder'],
+  params: z.object({
+    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*userId:</b> string</code></pre>'),
+    editOldSubfolderName: z.string(genMsgError('editOldSubfolderName', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*editOldSubfolderName:</b> string</code></pre>'),
+  }),
+  body: z.object({
+    editFolderId: z.string(genMsgError('editFolderId', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*editFolderId:</b> string</code></pre>'),
+    editSubfolderName: z.string(genMsgError('editSubfolderName', Type.STRING, Required.TRUE))
+      .min(1, genMsgError('editSubfolderName', Type.MIN, Required.NULL, '1'))
+      .max(16, genMsgError('editSubfolderName', Type.MAX, Required.NULL, '16'))
+      .describe('<pre><code><b>*editSubfolderName:</b> string (min: 1, max: 16)</code></pre>')
+  }),
+  response: {
+    204: z.null(),
+    400: errorSchema,
+    403: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userFoldersGetByUserIdSchema,
   createFolderSchema,
@@ -245,5 +270,6 @@ export {
   createLinkSubfolderSchema,
   deleteLinkSchema,
   editFolderSchema,
-  deleteFolderSchema
+  deleteFolderSchema,
+  editSubfolderSchema
 };
