@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
+import verifyToken from '@/handlers/verifyTokenHandler';
 import {
   createFolderSchema,
   createLinkSchema,
@@ -23,7 +24,24 @@ import {
   editSubfolderController,
   getFoldersByUserIdController
 } from '@/controllers/userFolderController';
-import verifyToken from '@/handlers/verifyTokenHandler';
+import {
+  ICreateFolderBody,
+  ICreateFolderParams,
+  ICreateLinkBody,
+  ICreateLinkParams,
+  ICreateLinkSubfolderBody,
+  ICreateLinkSubfolderParams,
+  ICreateSubfolderBody,
+  ICreateSubfolderParams,
+  IDeleteFolderBody,
+  IDeleteFolderParams,
+  IDeleteLinkBody,
+  IDeleteLinkParams,
+  IEditFolderBody,
+  IEditFolderParams,
+  IEditSubfolderBody,
+  IEditSubfolderParams
+} from '@/interfaces/userFolderInterface';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
@@ -34,8 +52,8 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   );
 
   routeOptions.post<{
-    Params: { userId: string }
-    Body: { folderName: string }
+    Params: ICreateFolderParams,
+    Body: ICreateFolderBody,
   }>('/folders/:userId',
     {
       schema: createFolderSchema,
@@ -44,38 +62,80 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
     createFolderController
   );
 
-  routeOptions.post('/folders/:userId/link/:folderId',
-    { schema: createLinkSchema },
+  routeOptions.post<{
+    Params: ICreateLinkParams,
+    Body: ICreateLinkBody
+  }>('/folders/:userId/link/:folderId',
+    {
+      schema: createLinkSchema,
+      preHandler: [verifyToken]
+    },
     createLinkController
   );
 
-  routeOptions.post('/folders/:userId/subfolders/:folderId',
-    { schema: createSubfolderSchema },
+  routeOptions.post<{
+    Params: ICreateSubfolderParams,
+    Body: ICreateSubfolderBody
+  }>('/folders/:userId/subfolders/:folderId',
+    {
+      schema: createSubfolderSchema,
+      preHandler: [verifyToken]
+    },
     createSubfolderController
   );
 
-  routeOptions.post('/folders/:userId/link/:folderId/:subfolderName',
-    { schema: createLinkSubfolderSchema },
+  routeOptions.post<{
+    Params: ICreateLinkSubfolderParams,
+    Body: ICreateLinkSubfolderBody
+  }>('/folders/:userId/link/:folderId/:subfolderName',
+    {
+      schema: createLinkSubfolderSchema,
+      preHandler: [verifyToken]
+    },
     createLinkSubfolderController
   );
 
-  routeOptions.delete('/folders/:userId/link',
-    { schema: deleteLinkSchema },
+  routeOptions.delete<{
+    Params: IDeleteLinkParams,
+    Body: IDeleteLinkBody
+  }>('/folders/:userId/link',
+    {
+      schema: deleteLinkSchema,
+      preHandler: [verifyToken]
+    },
     deleteLinkController
   );
 
-  routeOptions.put('/folders/:userId',
-    { schema: editFolderSchema },
+  routeOptions.put<{
+    Params: IEditFolderParams,
+    Body: IEditFolderBody
+  }>('/folders/:userId',
+    {
+      schema: editFolderSchema,
+      preHandler: [verifyToken]
+    },
     editFolderController
   );
 
-  routeOptions.delete('/folders/:userId',
-    { schema: deleteFolderSchema },
+  routeOptions.delete<{
+    Params: IDeleteFolderParams,
+    Body: IDeleteFolderBody
+  }>('/folders/:userId',
+    {
+      schema: deleteFolderSchema,
+      preHandler: [verifyToken]
+    },
     deleteFolderController
   );
 
-  routeOptions.put('/subfolders/:userId/:editOldSubfolderName',
-    { schema: editSubfolderSchema },
+  routeOptions.put<{
+    Params: IEditSubfolderParams,
+    Body: IEditSubfolderBody
+  }>('/subfolders/:userId/:editOldSubfolderName',
+    {
+      schema: editSubfolderSchema,
+      preHandler: [verifyToken]
+    },
     editSubfolderController
   );
 };

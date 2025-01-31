@@ -7,6 +7,74 @@ export interface ILink {
   isPrivate: boolean;
 }
 
+interface IUserId {
+  userId: string;
+}
+
+export interface IGetFoldersByUserIdParams extends IUserId { }
+
+export interface ICreateFolderParams extends IUserId { }
+
+export interface ICreateFolderBody {
+  folderName: string;
+}
+
+export interface ICreateLinkParams {
+  userId: string;
+  folderId: string;
+}
+
+export interface ICreateLinkBody extends ILink { }
+
+export interface ICreateSubfolderParams {
+  userId: string;
+  folderId: string;
+  subfolderName: string;
+}
+
+export interface ICreateSubfolderBody {
+  subfolderName: string;
+}
+
+export interface ICreateLinkSubfolderBody extends ILink { }
+
+export interface ICreateLinkSubfolderParams extends ICreateSubfolderParams { }
+
+export interface IDeleteLinkParams extends IUserId { }
+
+export interface IDeleteLinkBody {
+  folderId: string | null;
+  subfolderName: string | null;
+  linkId: string | null;
+  linkUrl: string;
+  linkPicture: string | null;
+}
+
+export interface IEditFolderParams extends IUserId { }
+
+export interface IEditFolderBody {
+  editFolderId: string;
+  editFolderName: string;
+}
+
+export interface IDeleteFolderParams extends IUserId { }
+
+export interface IDeleteFolderBody {
+  deleteFolderId: string;
+}
+
+export interface IEditSubfolderParams {
+  userId: string;
+  editOldSubfolderName: string;
+}
+
+export interface IEditSubfolderBody {
+  editFolderId: string;
+  editSubfolderName: string;
+}
+
+export interface IEditSubfolderRequest extends IEditSubfolderParams, IEditSubfolderBody { }
+
 export interface IFolder {
   name: string;
   links?: ILink[] | null;
@@ -23,45 +91,4 @@ export type IUserFolderCreateRoot = Omit<IUserFolder, 'createdAt'>;
 
 export interface IUserFolderResponse extends IUserFolder {
   _id: Types.ObjectId;
-}
-
-export interface ILinkFolderParams {
-  userId: string;
-  folderId: string;
-}
-
-export interface ILinkSubfolderParams {
-  userId: string;
-  folderId: string;
-  subfolderName: string;
-}
-
-export interface IDeleteLinkBody {
-  folderId: string | null;
-  subfolderName: string | null;
-  linkId: string | null;
-  linkUrl: string;
-  linkPicture: string | null;
-}
-
-export interface IEditFolderBody {
-  editFolderId: string;
-  editFolderName: string;
-}
-
-export interface IEditSubfolderParams {
-  userId: string;
-  editOldSubfolderName: string;
-}
-
-export interface IEditSubfolderBody {
-  editFolderId: string;
-  editSubfolderName: string;
-}
-
-export interface IEditSubfolderRequest {
-  userId: string;
-  editFolderId: string;
-  editSubfolderName: string;
-  editOldSubfolderName: string;
 }

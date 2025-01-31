@@ -3,22 +3,31 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import errorHandler from '@/helpers/errorHandler';
 import userFolderService from '@/services/userFolderService';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IJwtVerify } from '@/interfaces/jwtInterface';
 import {
+  ICreateFolderBody,
+  ICreateFolderParams,
+  ICreateLinkBody,
+  ICreateLinkParams,
+  ICreateLinkSubfolderBody,
+  ICreateLinkSubfolderParams,
+  ICreateSubfolderBody,
+  ICreateSubfolderParams,
+  IDeleteFolderBody,
+  IDeleteFolderParams,
   IDeleteLinkBody,
+  IDeleteLinkParams,
   IEditFolderBody,
+  IEditFolderParams,
   IEditSubfolderBody,
   IEditSubfolderParams,
   IEditSubfolderRequest,
-  ILink,
-  ILinkFolderParams,
-  ILinkSubfolderParams,
+  IGetFoldersByUserIdParams,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{
-    Params: { userId: string }
+    Params: IGetFoldersByUserIdParams
   }>,
   reply: FastifyReply
 ) => {
@@ -47,8 +56,8 @@ export const getFoldersByUserIdController = async (
 
 export const createFolderController = async (
   request: FastifyRequest<{
-    Params: { userId: string },
-    Body: { folderName: string }
+    Params: ICreateFolderParams,
+    Body: ICreateFolderBody
   }>,
   reply: FastifyReply
 ) => {
@@ -74,45 +83,18 @@ export const createFolderController = async (
 
     errorHandler(errorMessage, request, reply);
   }
-
 };
+
 export const createLinkController = async (
   request: FastifyRequest<{
-    Params: ILinkFolderParams,
-    Body: ILink
+    Params: ICreateLinkParams,
+    Body: ICreateLinkBody
   }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId, folderId } = request.params;
     const link = request.body;
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: IUserFolderResponse | IGenericError = await userFolderService.createLink(userId, link, folderId);
 
@@ -136,44 +118,14 @@ export const createLinkController = async (
 
 export const createSubfolderController = async (
   request: FastifyRequest<{
-    Params: ILinkSubfolderParams,
-    Body: {
-      subfolderName: string
-    }
+    Params: ICreateSubfolderParams,
+    Body: ICreateSubfolderBody
   }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId, folderId } = request.params;
     const { subfolderName } = request.body;
-
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: IUserFolderResponse | IGenericError = await userFolderService.createSubfolder(userId, subfolderName, folderId);
 
@@ -197,41 +149,14 @@ export const createSubfolderController = async (
 
 export const createLinkSubfolderController = async (
   request: FastifyRequest<{
-    Params: ILinkSubfolderParams,
-    Body: ILink
+    Params: ICreateLinkSubfolderParams,
+    Body: ICreateLinkSubfolderBody
   }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId, folderId, subfolderName } = request.params;
     const link = request.body;
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: { picture: string } | IGenericError = await userFolderService.createLinkSubfolder(userId, link, folderId, subfolderName);
 
@@ -255,40 +180,13 @@ export const createLinkSubfolderController = async (
 
 export const deleteLinkController = async (
   request: FastifyRequest<{
-    Params: { userId: string },
+    Params: IDeleteLinkParams,
     Body: IDeleteLinkBody
   }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId } = request.params;
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: { delete: boolean } | IGenericError = await userFolderService.deleteLink(userId, request.body);
 
@@ -312,7 +210,7 @@ export const deleteLinkController = async (
 
 export const editFolderController = async (
   request: FastifyRequest<{
-    Params: { userId: string },
+    Params: IEditFolderParams,
     Body: IEditFolderBody
   }>,
   reply: FastifyReply
@@ -320,34 +218,6 @@ export const editFolderController = async (
   try {
     const { userId } = request.params;
     const { editFolderId, editFolderName } = request.body;
-
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: { ok: true } | IGenericError = await userFolderService.editFolder(userId, editFolderId, editFolderName);
 
@@ -371,41 +241,14 @@ export const editFolderController = async (
 
 export const deleteFolderController = async (
   request: FastifyRequest<{
-    Params: { userId: string },
-    Body: { deleteFolderId: string }
+    Params: IDeleteFolderParams,
+    Body: IDeleteFolderBody
   }>,
   reply: FastifyReply
 ) => {
   try {
     const { userId } = request.params;
     const { deleteFolderId } = request.body;
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
 
     const response: { delete: boolean } | IGenericError = await userFolderService.deleteFolder(userId, deleteFolderId);
 
@@ -435,41 +278,9 @@ export const editSubfolderController = async (
   reply: FastifyReply
 ) => {
   try {
-    const { userId, editOldSubfolderName } = request.params;
-    const { editFolderId, editSubfolderName } = request.body;
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
     const editSubfolderRequest: IEditSubfolderRequest = {
-      userId,
-      editFolderId,
-      editSubfolderName,
-      editOldSubfolderName
+      ...request.params,
+      ...request.body
     };
 
     const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(editSubfolderRequest);
