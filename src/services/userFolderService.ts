@@ -86,7 +86,7 @@ const userFolderService = {
     }
   },
 
-  createFolder: async (userId: string, folderName: string): Promise<IUserFolderResponse | IGenericError> => {
+  createFolder: async (userId: string, folderName: string): Promise<void | IGenericError> => {
     try {
       const userFolders = await UserFolderModel.findOne({ userId });
 
@@ -106,9 +106,9 @@ const userFolderService = {
         subfolders: []
       });
 
-      const response = await userFolders.save();
+      await userFolders.save();
 
-      return response.toObject() as IUserFolderResponse;
+      return;
     } catch (error) {
       const errorMessage: IGenericError = {
         error: true,

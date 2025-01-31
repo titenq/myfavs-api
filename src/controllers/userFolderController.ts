@@ -65,9 +65,9 @@ export const createFolderController = async (
     const { userId } = request.params;
     const { folderName } = request.body;
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, folderName);
+    const response: void | IGenericError = await userFolderService.createFolder(userId, folderName);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -78,7 +78,7 @@ export const createFolderController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao criar pasta',
-      statusCode: 500
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);
