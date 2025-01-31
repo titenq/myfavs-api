@@ -405,3 +405,55 @@ export const deleteFolderController = async (
     errorHandler(errorMessage, request, reply);
   }
 };
+
+export const editSubfolderController = async (
+  request: FastifyRequest<{ Params: { userId: string, editOldSubfolderName: string }, Body: { editFolderId: string, editSubfolderName: string } }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId, editOldSubfolderName } = request.params;
+    const { editFolderId, editSubfolderName } = request.body;
+    const token = request.cookies.token;
+
+    if (!token) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+
+    if (decodedToken._id !== userId) {
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'não autorizado',
+        statusCode: 403
+      };
+
+      errorHandler(errorMessage, request, reply);
+      return;
+    }
+
+    const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(userId, editFolderId, editSubfolderName, editOldSubfolderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+      return;
+    }
+
+    reply.status(204).send();
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao editar subpasta',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
