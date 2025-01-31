@@ -30,7 +30,7 @@ export const getUserByEmailController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao buscar usuário por e-mail',
-      statusCode: 500,
+      statusCode: 400
     };
 
     errorHandler(errorMessage, request, reply);

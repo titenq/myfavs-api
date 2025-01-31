@@ -59,8 +59,8 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
   } catch (error) {
     let errorMessage: IGenericError = {
       error: true,
-      message: 'erro inesperado',
-      statusCode: 500
+      message: 'erro ao criar screenshot',
+      statusCode: 400
     };
 
     if (error instanceof Error && error.message.includes('ERR_NAME_NOT_RESOLVED')) {
