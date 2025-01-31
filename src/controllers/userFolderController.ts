@@ -65,6 +65,7 @@ export const createFolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -85,6 +86,7 @@ export const createFolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -120,6 +122,7 @@ export const createLinkController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -133,6 +136,7 @@ export const createLinkController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -140,6 +144,7 @@ export const createLinkController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -178,6 +183,7 @@ export const createSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -191,6 +197,7 @@ export const createSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -198,6 +205,7 @@ export const createSubfolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -290,6 +298,7 @@ export const deleteLinkController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -303,6 +312,7 @@ export const deleteLinkController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -310,6 +320,7 @@ export const deleteLinkController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -346,6 +357,7 @@ export const editFolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -359,6 +371,7 @@ export const editFolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -366,6 +379,7 @@ export const editFolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -401,6 +415,7 @@ export const deleteFolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -414,6 +429,7 @@ export const deleteFolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -421,6 +437,7 @@ export const deleteFolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+
       return;
     }
 
@@ -456,6 +473,7 @@ export const editSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -469,6 +487,7 @@ export const editSubfolderController = async (
       };
 
       errorHandler(errorMessage, request, reply);
+
       return;
     }
 
@@ -483,6 +502,7 @@ export const editSubfolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
+      
       return;
     }
 
