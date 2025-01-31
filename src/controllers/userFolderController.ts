@@ -3,10 +3,21 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import errorHandler from '@/helpers/errorHandler';
 import { IGenericError } from '@/interfaces/errorInterface';
 import userFolderService from '@/services/userFolderService';
-import { IDeleteLinkBody, ILink, ILinkFolderParams, ILinkSubfolderParams, IUserFolderResponse } from '@/interfaces/userFolderInterface';
+import {
+  IDeleteLinkBody,
+  IEditFolderBody,
+  IEditSubfolderBody,
+  IEditSubfolderParams,
+  ILink,
+  ILinkFolderParams,
+  ILinkSubfolderParams,
+  IUserFolderResponse
+} from '@/interfaces/userFolderInterface';
 
 export const getFoldersByUserIdController = async (
-  request: FastifyRequest<{ Params: { userId: string } }>,
+  request: FastifyRequest<{
+    Params: { userId: string }
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -33,7 +44,10 @@ export const getFoldersByUserIdController = async (
 };
 
 export const createFolderController = async (
-  request: FastifyRequest<{ Params: { userId: string }, Body: { folderName: string } }>,
+  request: FastifyRequest<{
+    Params: { userId: string },
+    Body: { folderName: string }
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -86,7 +100,10 @@ export const createFolderController = async (
 };
 
 export const createLinkController = async (
-  request: FastifyRequest<{ Params: ILinkFolderParams, Body: ILink }>,
+  request: FastifyRequest<{
+    Params: ILinkFolderParams,
+    Body: ILink
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -196,7 +213,10 @@ export const createSubfolderController = async (
 };
 
 export const createLinkSubfolderController = async (
-  request: FastifyRequest<{ Params: ILinkSubfolderParams, Body: ILink }>,
+  request: FastifyRequest<{
+    Params: ILinkSubfolderParams,
+    Body: ILink
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -251,7 +271,10 @@ export const createLinkSubfolderController = async (
 };
 
 export const deleteLinkController = async (
-  request: FastifyRequest<{ Params: { userId: string }, Body: IDeleteLinkBody }>,
+  request: FastifyRequest<{
+    Params: { userId: string },
+    Body: IDeleteLinkBody
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -302,7 +325,10 @@ export const deleteLinkController = async (
 };
 
 export const editFolderController = async (
-  request: FastifyRequest<{ Params: { userId: string }, Body: { editFolderId: string, editFolderName: string } }>,
+  request: FastifyRequest<{
+    Params: { userId: string },
+    Body: IEditFolderBody
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -355,7 +381,10 @@ export const editFolderController = async (
 };
 
 export const deleteFolderController = async (
-  request: FastifyRequest<{ Params: { userId: string }, Body: { deleteFolderId: string } }>,
+  request: FastifyRequest<{
+    Params: { userId: string },
+    Body: { deleteFolderId: string }
+  }>,
   reply: FastifyReply
 ) => {
   try {
@@ -407,7 +436,10 @@ export const deleteFolderController = async (
 };
 
 export const editSubfolderController = async (
-  request: FastifyRequest<{ Params: { userId: string, editOldSubfolderName: string }, Body: { editFolderId: string, editSubfolderName: string } }>,
+  request: FastifyRequest<{
+    Params: IEditSubfolderParams,
+    Body: IEditSubfolderBody
+  }>,
   reply: FastifyReply
 ) => {
   try {

@@ -43,3 +43,18 @@ export interface IDeleteLinkBody {
   linkUrl: string;
   linkPicture: string | null;
 }
+
+export interface IEditFolderBody {
+  editFolderId: string;
+  editFolderName: string;
+}
+
+export interface IEditSubfolderParams {
+  userId: string;
+  editOldSubfolderName: string;
+}
+
+export interface IEditSubfolderBody {
+  editFolderId: string;
+  editSubfolderName: string;
+}
