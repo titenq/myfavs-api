@@ -1,8 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
 import errorHandler from '@/helpers/errorHandler';
-import { IGenericError } from '@/interfaces/errorInterface';
 import userFolderService from '@/services/userFolderService';
+import { IGenericError } from '@/interfaces/errorInterface';
+import { IJwtVerify } from '@/interfaces/jwtInterface';
 import {
   IDeleteLinkBody,
   IEditFolderBody,
@@ -55,33 +56,6 @@ export const createFolderController = async (
     const { userId } = request.params;
     const { folderName } = request.body;
 
-    const token = request.cookies.token;
-
-    if (!token) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-
-      return;
-    }
-
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
-
-    if (decodedToken._id !== userId) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'não autorizado',
-        statusCode: 403
-      };
-
-      errorHandler(errorMessage, request, reply);
-      return;
-    }
-
     const response: IUserFolderResponse | IGenericError = await userFolderService.createFolder(userId, folderName);
 
     if ('error' in response) {
@@ -100,8 +74,8 @@ export const createFolderController = async (
 
     errorHandler(errorMessage, request, reply);
   }
-};
 
+};
 export const createLinkController = async (
   request: FastifyRequest<{
     Params: ILinkFolderParams,
@@ -126,7 +100,7 @@ export const createLinkController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -187,7 +161,7 @@ export const createSubfolderController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -245,7 +219,7 @@ export const createLinkSubfolderController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -302,7 +276,7 @@ export const deleteLinkController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -361,7 +335,7 @@ export const editFolderController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -419,7 +393,7 @@ export const deleteFolderController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -477,7 +451,7 @@ export const editSubfolderController = async (
       return;
     }
 
-    const decodedToken = request.server.jwt.verify<{ _id: string; }>(token);
+    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
 
     if (decodedToken._id !== userId) {
       const errorMessage: IGenericError = {
@@ -502,7 +476,7 @@ export const editSubfolderController = async (
 
     if ('error' in response) {
       errorHandler(response, request, reply);
-      
+
       return;
     }
 

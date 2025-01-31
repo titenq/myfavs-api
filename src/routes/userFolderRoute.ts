@@ -23,77 +23,61 @@ import {
   editSubfolderController,
   getFoldersByUserIdController
 } from '@/controllers/userFolderController';
+import verifyToken from '@/handlers/verifyTokenHandler';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .get('/folders/:userId',
-      { schema: userFoldersGetByUserIdSchema },
-      getFoldersByUserIdController
-    );
+  const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
 
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/folders/:userId',
-      {
-        schema: createFolderSchema
-      },
-      createFolderController
-    );
+  routeOptions.get('/folders/:userId',
+    { schema: userFoldersGetByUserIdSchema },
+    getFoldersByUserIdController
+  );
 
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/folders/:userId/link/:folderId',
-      {
-        schema: createLinkSchema
-      },
-      createLinkController
-    );
+  routeOptions.post<{
+    Params: { userId: string }
+    Body: { folderName: string }
+  }>('/folders/:userId',
+    {
+      schema: createFolderSchema,
+      preHandler: [verifyToken]
+    },
+    createFolderController
+  );
 
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/folders/:userId/subfolders/:folderId',
-      {
-        schema: createSubfolderSchema
-      },
-      createSubfolderController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/folders/:userId/link/:folderId/:subfolderName',
-      {
-        schema: createLinkSubfolderSchema
-      },
-      createLinkSubfolderController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .delete('/folders/:userId/link',
-      {
-        schema: deleteLinkSchema
-      },
-      deleteLinkController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .put('/folders/:userId',
-      {
-        schema: editFolderSchema
-      },
-      editFolderController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .delete('/folders/:userId',
-      {
-        schema: deleteFolderSchema
-      },
-      deleteFolderController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .put('/subfolders/:userId/:editOldSubfolderName',
-      {
-        schema: editSubfolderSchema
-      },
-      editSubfolderController
-    );
+  routeOptions.post('/folders/:userId/link/:folderId',
+    { schema: createLinkSchema },
+    createLinkController
+  );
+
+  routeOptions.post('/folders/:userId/subfolders/:folderId',
+    { schema: createSubfolderSchema },
+    createSubfolderController
+  );
+
+  routeOptions.post('/folders/:userId/link/:folderId/:subfolderName',
+    { schema: createLinkSubfolderSchema },
+    createLinkSubfolderController
+  );
+
+  routeOptions.delete('/folders/:userId/link',
+    { schema: deleteLinkSchema },
+    deleteLinkController
+  );
+
+  routeOptions.put('/folders/:userId',
+    { schema: editFolderSchema },
+    editFolderController
+  );
+
+  routeOptions.delete('/folders/:userId',
+    { schema: deleteFolderSchema },
+    deleteFolderController
+  );
+
+  routeOptions.put('/subfolders/:userId/:editOldSubfolderName',
+    { schema: editSubfolderSchema },
+    editSubfolderController
+  );
 };
 
 export default userFolderRoute;
