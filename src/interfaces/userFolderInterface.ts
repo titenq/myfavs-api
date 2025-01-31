@@ -58,3 +58,10 @@ export interface IEditSubfolderBody {
   editFolderId: string;
   editSubfolderName: string;
 }
+
+export interface IEditSubfolderRequest {
+  userId: string;
+  editFolderId: string;
+  editSubfolderName: string;
+  editOldSubfolderName: string;
+}

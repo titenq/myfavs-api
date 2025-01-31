@@ -5,13 +5,14 @@ import { Types } from 'mongoose';
 
 import takeScreenshot from '@/helpers/takeScreenshot';
 import { IGenericError } from '@/interfaces/errorInterface';
+import UserFolderModel from '@/models/UserFolderModel';
 import {
   IDeleteLinkBody,
+  IEditSubfolderRequest,
   ILink,
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
-import UserFolderModel from '@/models/UserFolderModel';
 
 const { ObjectId } = Types;
 
@@ -390,13 +391,20 @@ const userFolderService = {
     }
   },
 
-  editSubfolder: async (userId: string, editFolderId: string, editSubfolderName: string, oldEditSubfolderName: string): Promise<{ ok: true } | IGenericError> => {
+  editSubfolder: async (editSubfolderRequest: IEditSubfolderRequest): Promise<{ ok: true } | IGenericError> => {
     try {
+      const {
+        userId,
+        editFolderId,
+        editOldSubfolderName,
+        editSubfolderName
+      } = editSubfolderRequest;
+
       const userFolders = await UserFolderModel.findOneAndUpdate(
         {
           userId,
           'folders._id': editFolderId,
-          'folders.subfolders.name': oldEditSubfolderName
+          'folders.subfolders.name': editOldSubfolderName
         },
         {
           $set: {
@@ -406,7 +414,7 @@ const userFolderService = {
         {
           arrayFilters: [
             { 'folder._id': editFolderId },
-            { 'subfolder.name': oldEditSubfolderName }
+            { 'subfolder.name': editOldSubfolderName }
           ],
           new: true
         }

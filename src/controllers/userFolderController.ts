@@ -8,6 +8,7 @@ import {
   IEditFolderBody,
   IEditSubfolderBody,
   IEditSubfolderParams,
+  IEditSubfolderRequest,
   ILink,
   ILinkFolderParams,
   ILinkSubfolderParams,
@@ -471,7 +472,14 @@ export const editSubfolderController = async (
       return;
     }
 
-    const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(userId, editFolderId, editSubfolderName, editOldSubfolderName);
+    const editSubfolderRequest: IEditSubfolderRequest = {
+      userId,
+      editFolderId,
+      editSubfolderName,
+      editOldSubfolderName
+    };
+
+    const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(editSubfolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
