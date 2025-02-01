@@ -1,7 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
 
-const errorHandler = (error: any, request: FastifyRequest, reply: FastifyReply) => {
+import { IGenericError } from '@/interfaces/errorInterface';
+
+const errorHandler = (error: ZodError | IGenericError, request: FastifyRequest, reply: FastifyReply) => {
   if (error instanceof ZodError) {
     reply.status(400).send({
       error: true,

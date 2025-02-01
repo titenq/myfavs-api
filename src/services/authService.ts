@@ -23,6 +23,7 @@ import siteOrigin from '@/helpers/siteOrigin';
 import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
 import userFolderService from './userFolderService';
+import { IJwtError } from '@/interfaces/jwtInterface';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -100,7 +101,7 @@ const authService = {
 
       return user;
     } catch (error) {
-      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+      if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
         const errorMessage: IGenericError = {
           error: true,
           message: 'token expirado',
@@ -164,7 +165,7 @@ const authService = {
 
       return userVerifiedModified;
     } catch (error) {
-      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+      if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
         const errorMessage: IGenericError = {
           error: true,
           message: 'token expirado',
@@ -305,7 +306,7 @@ const authService = {
 
       return responseMessage;
     } catch (error) {
-      if ((error as any).code === 'FAST_JWT_EXPIRED') {
+      if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
         const errorMessage: IGenericError = {
           error: true,
           message: 'token expirado',

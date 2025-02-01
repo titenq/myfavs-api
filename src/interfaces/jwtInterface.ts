@@ -5,3 +5,7 @@ export interface IJwtVerify {
 export interface IJwtParams {
   userId: string;
 }
+
+export interface IJwtError {
+  code: 'FAST_JWT_EXPIRED' | string;
+}
