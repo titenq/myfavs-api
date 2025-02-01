@@ -22,7 +22,7 @@ import {
 import siteOrigin from '@/helpers/siteOrigin';
 import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
-import userFolderService from './userFolderService';
+import userFolderService from '@/services/userFolderService';
 import { IJwtError } from '@/interfaces/jwtInterface';
 
 const authService = {
