@@ -14,7 +14,7 @@ import {
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
-import { deleteFile } from '@/helpers/bucketActions';
+import { deleteFile, deleteMultipleFiles } from '@/helpers/bucketActions';
 
 const { ObjectId } = Types;
 
@@ -359,26 +359,14 @@ const userFolderService = {
       }
 
       const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
+      
+      const allLinks = [
+        ...(folder.links || []),
+        ...(folder.subfolders?.flatMap(subfolder => subfolder.links || []) || [])
+      ];
 
-      if (folder && folder.links) {
-        folder.links.forEach((link: ILink) => {
-          if (link.picture) {
-            const imagePath = path.join(process.cwd(), link.picture);
-
-            fs.unlinkSync(imagePath);
-          }
-        });
-
-        folder.subfolders?.forEach((subfolder: IFolder) => {
-          subfolder.links?.forEach((link: ILink) => {
-            if (link.picture) {
-              const imagePath = path.join(process.cwd(), link.picture);
-
-              fs.unlinkSync(imagePath);
-            }
-          });
-        });
-      }
+      const deleteResult = await deleteMultipleFiles(allLinks);
+      if (deleteResult !== true) return deleteResult;
 
       await UserFolderModel.updateOne(
         { userId },

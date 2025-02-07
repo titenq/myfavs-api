@@ -3,6 +3,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 import { IGenericError } from '@/interfaces/errorInterface';
+import { ILink } from '@/interfaces/userFolderInterface';
 
 const {
   BUCKET_KEY,
@@ -74,7 +75,19 @@ const deleteFile = async (pictureUrl: string): Promise<boolean | IGenericError> 
   }
 };
 
+const deleteMultipleFiles = async (links: ILink[]): Promise<IGenericError | true> => {
+  const deletePromises = links
+    .filter(link => link.picture)
+    .map(link => deleteFile(link.picture!));
+
+  const results = await Promise.all(deletePromises);
+  const error = results.find(result => typeof result === 'object' && 'error' in result);
+
+  return error || true;
+};
+
 export {
   saveFile,
-  deleteFile
+  deleteFile,
+  deleteMultipleFiles
 };
