@@ -3,24 +3,9 @@ import fs from 'node:fs';
 
 import puppeteer from 'puppeteer';
 import sharp from 'sharp';
-import { S3Client } from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
 
 import { IGenericError } from '@/interfaces/errorInterface';
-
-const { BUCKET_KEY, BUCKET_SECRET, BUCKET_NAME } = process.env;
-
-const credentials = {
-  accessKeyId: BUCKET_KEY!,
-  secretAccessKey: BUCKET_SECRET!
-};
-
-const s3Client = new S3Client({
-  endpoint: 'https://s3.tebi.io',
-  credentials: credentials,
-  region: 'global',
-  forcePathStyle: true
-});
+import { saveFile } from '@/helpers/bucketActions';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {
@@ -67,22 +52,18 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
       .jpeg({ quality: 60 })
       .toFile(filepath);
     
-    const uploadData = await new Upload({
-      client: s3Client,
-      params: {
-        Bucket: BUCKET_NAME!,
-        Key: filename,
-        Body: fs.createReadStream(filepath),
-        ContentType: 'image/jpeg'
-      }
-    }).done();
+    const fileLocation = await saveFile(filepath, filename);
+
+    if (typeof fileLocation === 'object' && 'error' in fileLocation) {
+      return fileLocation;
+    }
 
     fs.unlinkSync(tempPath);
     fs.unlinkSync(filepath);
 
     await browser.close();
 
-    return uploadData.Location!;
+    return fileLocation;
   } catch (error) {
     let errorMessage: IGenericError = {
       error: true,

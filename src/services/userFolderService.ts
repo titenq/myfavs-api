@@ -14,6 +14,7 @@ import {
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
+import { deleteFile } from '@/helpers/bucketActions';
 
 const { ObjectId } = Types;
 
@@ -253,9 +254,11 @@ const userFolderService = {
       const { folderId, subfolderName, linkUrl, linkPicture } = deleteLinkBody;
 
       if (linkPicture) {
-        const imagePath = path.join(process.cwd(), linkPicture);
-
-        fs.unlinkSync(imagePath);
+        const deleteResult = await deleteFile(linkPicture);
+        
+        if (typeof deleteResult === 'object' && 'error' in deleteResult) {
+          return deleteResult;
+        }
       }
 
       if (!subfolderName) {
