@@ -18,13 +18,16 @@ import {
   ICreateSubfolderRequest,
   IDeleteFolderBody,
   IDeleteFolderParams,
+  IDeleteFolderRequest,
   IDeleteLinkBody,
   IDeleteLinkParams,
   IDeleteLinkRequest,
   IDeleteSubfolderBody,
   IDeleteSubfolderParams,
+  IDeleteSubfolderRequest,
   IEditFolderBody,
   IEditFolderParams,
+  IEditFolderRequest,
   IEditSubfolderBody,
   IEditSubfolderParams,
   IEditSubfolderRequest,
@@ -253,8 +256,13 @@ export const editFolderController = async (
   try {
     const { userId } = request.params;
     const { editFolderId, editFolderName } = request.body;
+    const editFolderRequest: IEditFolderRequest = {
+      userId,
+      editFolderId,
+      editFolderName
+    };
 
-    const response: { ok: true } | IGenericError = await userFolderService.editFolder(userId, editFolderId, editFolderName);
+    const response: { ok: true } | IGenericError = await userFolderService.editFolder(editFolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -284,8 +292,12 @@ export const deleteFolderController = async (
   try {
     const { userId } = request.params;
     const { deleteFolderId } = request.body;
+    const deleteFolderRequest: IDeleteFolderRequest = {
+      userId,
+      deleteFolderId
+    };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteFolder(userId, deleteFolderId);
+    const response: { delete: boolean } | IGenericError = await userFolderService.deleteFolder(deleteFolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -313,9 +325,13 @@ export const editSubfolderController = async (
   reply: FastifyReply
 ) => {
   try {
+    const { userId, editOldSubfolderName } = request.params;
+    const { editFolderId, editSubfolderName } = request.body;
     const editSubfolderRequest: IEditSubfolderRequest = {
-      ...request.params,
-      ...request.body
+      userId,
+      editFolderId,
+      editOldSubfolderName,
+      editSubfolderName
     };
 
     const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(editSubfolderRequest);
@@ -348,8 +364,13 @@ export const deleteSubfolderController = async (
   try {
     const { userId } = request.params;
     const { deleteFolderId, deleteSubfolderName } = request.body;
+    const deleteSubfolderRequest: IDeleteSubfolderRequest = {
+      userId,
+      deleteFolderId,
+      deleteSubfolderName
+    };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteSubfolder(userId, deleteFolderId, deleteSubfolderName);
+    const response: { delete: boolean } | IGenericError = await userFolderService.deleteSubfolder(deleteSubfolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);

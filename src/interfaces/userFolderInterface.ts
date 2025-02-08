@@ -75,11 +75,15 @@ export interface IEditFolderBody {
   editFolderName: string;
 }
 
+export interface IEditFolderRequest extends IEditFolderParams, IEditFolderBody { }
+
 export interface IDeleteFolderParams extends IUserId { }
 
 export interface IDeleteFolderBody {
   deleteFolderId: string;
 }
+
+export interface IDeleteFolderRequest extends IDeleteFolderParams, IDeleteFolderBody { }
 
 export interface IEditSubfolderParams {
   userId: string;
@@ -117,3 +121,5 @@ export interface IDeleteSubfolderBody {
   deleteFolderId: string;
   deleteSubfolderName: string;
 }
+
+export interface IDeleteSubfolderRequest extends IDeleteSubfolderParams, IDeleteSubfolderBody { }

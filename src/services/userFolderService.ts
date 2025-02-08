@@ -9,8 +9,11 @@ import {
   ICreateLinkRequest,
   ICreateLinkSubfolderRequest,
   ICreateSubfolderRequest,
+  IDeleteFolderRequest,
   IDeleteLinkBody,
   IDeleteLinkRequest,
+  IDeleteSubfolderRequest,
+  IEditFolderRequest,
   IEditSubfolderRequest,
   IFolder,
   IGetFoldersByUserIdParams,
@@ -316,8 +319,9 @@ const userFolderService = {
     }
   },
 
-  editFolder: async (userId: string, editFolderId: string, editFolderName: string): Promise<{ ok: true } | IGenericError> => {
+  editFolder: async (editFolderRequest: IEditFolderRequest): Promise<{ ok: true } | IGenericError> => {
     try {
+      const { userId, editFolderId, editFolderName } = editFolderRequest;
       const userFolders = await UserFolderModel.findOneAndUpdate(
         {
           userId,
@@ -353,8 +357,9 @@ const userFolderService = {
     }
   },
 
-  deleteFolder: async (userId: string, deleteFolderId: string): Promise<{ delete: true } | IGenericError> => {
+  deleteFolder: async (deleteFolderRequest: IDeleteFolderRequest): Promise<{ delete: true } | IGenericError> => {
     try {
+      const { userId, deleteFolderId } = deleteFolderRequest;
       const userFolder = await UserFolderModel.findOne({ 
         userId,
         'folders._id': deleteFolderId 
@@ -444,8 +449,14 @@ const userFolderService = {
     }
   },
 
-  deleteSubfolder: async (userId: string, deleteFolderId: string, deleteSubfolderName: string): Promise<{ delete: true } | IGenericError> => {
+  deleteSubfolder: async (deleteSubfolderRequest: IDeleteSubfolderRequest): Promise<{ delete: true } | IGenericError> => {
     try {
+      const {
+        userId,
+        deleteFolderId,
+        deleteSubfolderName
+      } = deleteSubfolderRequest;
+
       const userFolder = await UserFolderModel.findOne({
         userId,
         'folders._id': deleteFolderId
