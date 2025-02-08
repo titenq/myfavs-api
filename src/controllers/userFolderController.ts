@@ -16,6 +16,8 @@ import {
   IDeleteFolderParams,
   IDeleteLinkBody,
   IDeleteLinkParams,
+  IDeleteSubfolderBody,
+  IDeleteSubfolderParams,
   IEditFolderBody,
   IEditFolderParams,
   IEditSubfolderBody,
@@ -296,6 +298,37 @@ export const editSubfolderController = async (
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao editar subpasta',
+      statusCode: 400
+    };
+
+    errorHandler(errorMessage, request, reply);
+  }
+};
+
+export const deleteSubfolderController = async (
+  request: FastifyRequest<{
+    Params: IDeleteSubfolderParams,
+    Body: IDeleteSubfolderBody
+  }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId } = request.params;
+    const { deleteFolderId, deleteSubfolderName } = request.body;
+
+    const response: { delete: boolean } | IGenericError = await userFolderService.deleteSubfolder(userId, deleteFolderId, deleteSubfolderName);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(204).send();
+  } catch (error) {
+    const errorMessage: IGenericError = {
+      error: true,
+      message: 'erro ao deletar subpasta',
       statusCode: 400
     };
 

@@ -9,6 +9,7 @@ import {
   createSubfolderSchema,
   deleteFolderSchema,
   deleteLinkSchema,
+  deleteSubfolderSchema,
   editFolderSchema,
   editSubfolderSchema,
   userFoldersGetByUserIdSchema
@@ -20,6 +21,7 @@ import {
   createSubfolderController,
   deleteFolderController,
   deleteLinkController,
+  deleteSubfolderController,
   editFolderController,
   editSubfolderController,
   getFoldersByUserIdController
@@ -37,6 +39,8 @@ import {
   IDeleteFolderParams,
   IDeleteLinkBody,
   IDeleteLinkParams,
+  IDeleteSubfolderBody,
+  IDeleteSubfolderParams,
   IEditFolderBody,
   IEditFolderParams,
   IEditSubfolderBody,
@@ -137,6 +141,17 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
       preHandler: [verifyToken]
     },
     editSubfolderController
+  );
+
+  routeOptions.delete<{
+    Params: IDeleteSubfolderParams,
+    Body: IDeleteSubfolderBody
+  }>('/subfolders/:userId',
+    {
+      schema: deleteSubfolderSchema,
+      preHandler: [verifyToken]
+    },
+    deleteSubfolderController
   );
 };
 

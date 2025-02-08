@@ -92,3 +92,10 @@ export type IUserFolderCreateRoot = Omit<IUserFolder, 'createdAt'>;
 export interface IUserFolderResponse extends IUserFolder {
   _id: Types.ObjectId;
 }
+
+export interface IDeleteSubfolderParams extends IUserId { }
+
+export interface IDeleteSubfolderBody {
+  deleteFolderId: string;
+  deleteSubfolderName: string;
+}

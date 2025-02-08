@@ -433,6 +433,52 @@ const userFolderService = {
       return errorMessage;
     }
   },
-};
+
+  deleteSubfolder: async (userId: string, deleteFolderId: string, deleteSubfolderName: string): Promise<{ delete: true } | IGenericError> => {
+    try {
+      const userFolder = await UserFolderModel.findOne({
+        userId,
+        'folders._id': deleteFolderId
+      });
+
+      if (!userFolder) {
+        return {
+          error: true,
+          message: 'Subpasta não encontrada',
+          statusCode: 404
+        };
+      }
+
+      const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
+      const subfolder = folder.subfolders?.find(s => s.name === deleteSubfolderName);
+
+      if (!subfolder) {
+        return {
+          error: true,
+          message: 'Subpasta não encontrada',
+          statusCode: 404
+        };
+      }
+
+      const deleteResult = await deleteMultipleFiles(subfolder.links || []);
+
+      if (deleteResult !== true) {
+        return deleteResult;
+      }
+
+      await UserFolderModel.updateOne(
+        { userId, 'folders._id': deleteFolderId },
+        { $pull: { 'folders.$.subfolders': { name: deleteSubfolderName } } }
+      );
+
+      return { delete: true };
+    } catch (error) {
+      return {
+        error: true,
+        message: 'erro ao deletar subpasta',
+        statusCode: 400
+      };
+    }
+  }};
 
 export default userFolderService;
