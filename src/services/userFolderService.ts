@@ -1,16 +1,19 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 import { Types } from 'mongoose';
 
 import takeScreenshot from '@/helpers/takeScreenshot';
 import { IGenericError } from '@/interfaces/errorInterface';
 import UserFolderModel from '@/models/UserFolderModel';
 import {
+  ICreateFolderRequest,
+  ICreateFolderRoot,
+  ICreateLinkRequest,
+  ICreateLinkSubfolderRequest,
+  ICreateSubfolderRequest,
   IDeleteLinkBody,
+  IDeleteLinkRequest,
   IEditSubfolderRequest,
   IFolder,
-  ILink,
+  IGetFoldersByUserIdParams,
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
@@ -19,8 +22,9 @@ import { deleteFile, deleteMultipleFiles } from '@/helpers/bucketActions';
 const { ObjectId } = Types;
 
 const userFolderService = {
-  getFoldersByUserId: async (userId: string): Promise<IUserFolderResponse | IGenericError> => {
+  getFoldersByUserId: async (getFoldersByUserId: IGetFoldersByUserIdParams): Promise<IUserFolderResponse | IGenericError> => {
     try {
+      const { userId } = getFoldersByUserId;
       const response: IUserFolderResponse | null = await UserFolderModel
         .findOne({ userId })
         .lean();
@@ -51,8 +55,9 @@ const userFolderService = {
     }
   },
   
-  createFolderRoot: async (userId: string): Promise<IUserFolderResponse | IGenericError> => {
+  createFolderRoot: async (createFolderRoot: ICreateFolderRoot): Promise<IUserFolderResponse | IGenericError> => {
     try {
+      const { userId } = createFolderRoot;
       const rootFolder: IUserFolderCreateRoot = {
         userId,
         folders: [
@@ -88,8 +93,9 @@ const userFolderService = {
     }
   },
 
-  createFolder: async (userId: string, folderName: string): Promise<void | IGenericError> => {
+  createFolder: async (createFolder: ICreateFolderRequest): Promise<void | IGenericError> => {
     try {
+      const { userId, folderName } = createFolder;
       const userFolders = await UserFolderModel.findOne({ userId });
 
       if (!userFolders) {
@@ -122,8 +128,9 @@ const userFolderService = {
     }
   },
 
-  createLink: async (userId: string, link: ILink, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
+  createLink: async (createLinkRequest: ICreateLinkRequest): Promise<IUserFolderResponse | IGenericError> => {
     try {
+      const { userId, link, folderId } = createLinkRequest;
       const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
 
       if (typeof screenshotPath === 'object' && 'error' in screenshotPath) {
@@ -163,8 +170,9 @@ const userFolderService = {
     }
   },
 
-  createSubfolder: async (userId: string, subfolderName: string, folderId: string): Promise<IUserFolderResponse | IGenericError> => {
+  createSubfolder: async (createSubfolderRequest: ICreateSubfolderRequest): Promise<IUserFolderResponse | IGenericError> => {
     try {
+      const { userId, folderId, subfolderName } = createSubfolderRequest;
       const userFolders = await UserFolderModel.findOneAndUpdate(
         { userId, 'folders._id': folderId },
         { $push: { 'folders.$.subfolders': { name: subfolderName, links: [], subfolders: [] } } },
@@ -195,8 +203,9 @@ const userFolderService = {
     }
   },
 
-  createLinkSubfolder: async (userId: string, link: ILink, folderId: string, subfolderName: string): Promise<{ picture: string } | IGenericError> => {
+  createLinkSubfolder: async (createLinkSubfolderRequest: ICreateLinkSubfolderRequest): Promise<{ picture: string } | IGenericError> => {
     try {
+      const { userId, link, folderId, subfolderName } = createLinkSubfolderRequest;
       const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
 
       if (typeof screenshotPath === 'object' && 'error' in screenshotPath) {
@@ -249,9 +258,10 @@ const userFolderService = {
     }
   },
 
-  deleteLink: async (userId: string, deleteLinkBody: IDeleteLinkBody): Promise<{ delete: true} | IGenericError> => {
+  deleteLink: async (deleteLinkRequest: IDeleteLinkRequest): Promise<{ delete: true} | IGenericError> => {
     try {
-      const { folderId, subfolderName, linkUrl, linkPicture } = deleteLinkBody;
+      const { userId, deleteLink } = deleteLinkRequest;
+      const { folderId, linkUrl, subfolderName, linkPicture } = deleteLink;
 
       if (linkPicture) {
         const deleteResult = await deleteFile(linkPicture);

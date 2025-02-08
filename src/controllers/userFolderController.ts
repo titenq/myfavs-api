@@ -6,16 +6,21 @@ import { IGenericError } from '@/interfaces/errorInterface';
 import {
   ICreateFolderBody,
   ICreateFolderParams,
+  ICreateFolderRequest,
   ICreateLinkBody,
   ICreateLinkParams,
+  ICreateLinkRequest,
   ICreateLinkSubfolderBody,
   ICreateLinkSubfolderParams,
+  ICreateLinkSubfolderRequest,
   ICreateSubfolderBody,
   ICreateSubfolderParams,
+  ICreateSubfolderRequest,
   IDeleteFolderBody,
   IDeleteFolderParams,
   IDeleteLinkBody,
   IDeleteLinkParams,
+  IDeleteLinkRequest,
   IDeleteSubfolderBody,
   IDeleteSubfolderParams,
   IEditFolderBody,
@@ -24,6 +29,7 @@ import {
   IEditSubfolderParams,
   IEditSubfolderRequest,
   IGetFoldersByUserIdParams,
+  IGetFoldersByUserIdRequest,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 
@@ -35,8 +41,11 @@ export const getFoldersByUserIdController = async (
 ) => {
   try {
     const { userId } = request.params;
+    const getFoldersByUserIdRequest: IGetFoldersByUserIdRequest = {
+      userId
+    };
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.getFoldersByUserId(userId);
+    const response: IUserFolderResponse | IGenericError = await userFolderService.getFoldersByUserId(getFoldersByUserIdRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -66,8 +75,12 @@ export const createFolderController = async (
   try {
     const { userId } = request.params;
     const { folderName } = request.body;
+    const createFolderRequest: ICreateFolderRequest = {
+      userId,
+      folderName
+    };
 
-    const response: void | IGenericError = await userFolderService.createFolder(userId, folderName);
+    const response: void | IGenericError = await userFolderService.createFolder(createFolderRequest);
 
     if (response && 'error' in response) {
       errorHandler(response, request, reply);
@@ -97,8 +110,13 @@ export const createLinkController = async (
   try {
     const { userId, folderId } = request.params;
     const link = request.body;
+    const createLinkRequest: ICreateLinkRequest = {
+      userId,
+      link,
+      folderId
+    };
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.createLink(userId, link, folderId);
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createLink(createLinkRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -128,8 +146,13 @@ export const createSubfolderController = async (
   try {
     const { userId, folderId } = request.params;
     const { subfolderName } = request.body;
+    const createSubfolderRequest: ICreateSubfolderRequest = {
+      userId,
+      folderId,
+      subfolderName
+    };
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.createSubfolder(userId, subfolderName, folderId);
+    const response: IUserFolderResponse | IGenericError = await userFolderService.createSubfolder(createSubfolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -159,8 +182,14 @@ export const createLinkSubfolderController = async (
   try {
     const { userId, folderId, subfolderName } = request.params;
     const link = request.body;
+    const createLinkSubfolderRequest: ICreateLinkSubfolderRequest = {
+      userId,
+      link,
+      folderId,
+      subfolderName
+    };
 
-    const response: { picture: string } | IGenericError = await userFolderService.createLinkSubfolder(userId, link, folderId, subfolderName);
+    const response: { picture: string } | IGenericError = await userFolderService.createLinkSubfolder(createLinkSubfolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -189,8 +218,12 @@ export const deleteLinkController = async (
 ) => {
   try {
     const { userId } = request.params;
+    const deleteLinkRequest: IDeleteLinkRequest = {
+      userId,
+      deleteLink: request.body
+    };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteLink(userId, request.body);
+    const response: { delete: boolean } | IGenericError = await userFolderService.deleteLink(deleteLinkRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);

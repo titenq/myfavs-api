@@ -13,11 +13,17 @@ interface IUserId {
 
 export interface IGetFoldersByUserIdParams extends IUserId { }
 
+export interface IGetFoldersByUserIdRequest extends IGetFoldersByUserIdParams { }
+
+export interface ICreateFolderRoot extends IUserId { }
+
 export interface ICreateFolderParams extends IUserId { }
 
 export interface ICreateFolderBody {
   folderName: string;
 }
+
+export interface ICreateFolderRequest extends ICreateFolderParams, ICreateFolderBody { }
 
 export interface ICreateLinkParams {
   userId: string;
@@ -26,28 +32,40 @@ export interface ICreateLinkParams {
 
 export interface ICreateLinkBody extends ILink { }
 
+export interface ICreateLinkRequest extends ICreateLinkParams {
+  link: ILink;
+}
+
 export interface ICreateSubfolderParams {
   userId: string;
   folderId: string;
-  subfolderName: string;
 }
 
 export interface ICreateSubfolderBody {
   subfolderName: string;
 }
 
+export interface ICreateSubfolderRequest extends ICreateSubfolderParams, ICreateSubfolderBody { }
+
 export interface ICreateLinkSubfolderBody extends ILink { }
 
-export interface ICreateLinkSubfolderParams extends ICreateSubfolderParams { }
+export interface ICreateLinkSubfolderParams extends ICreateSubfolderParams, ICreateSubfolderBody { }
+
+export interface ICreateLinkSubfolderRequest extends ICreateLinkSubfolderParams {
+  link: ILink;
+}
 
 export interface IDeleteLinkParams extends IUserId { }
 
 export interface IDeleteLinkBody {
   folderId: string | null;
   subfolderName: string | null;
-  linkId: string | null;
   linkUrl: string;
   linkPicture: string | null;
+}
+
+export interface IDeleteLinkRequest extends IDeleteLinkParams {
+  deleteLink: IDeleteLinkBody;
 }
 
 export interface IEditFolderParams extends IUserId { }
