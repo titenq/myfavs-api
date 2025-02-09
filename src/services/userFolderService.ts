@@ -29,9 +29,7 @@ const userFolderService = {
   getFoldersByUserId: async (getFoldersByUserId: IGetFoldersByUserIdParams): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const { userId } = getFoldersByUserId;
-      const response: IUserFolderResponse | null = await UserFolderModel
-        .findOne({ userId })
-        .lean();
+      const response: IUserFolderResponse | null = await UserFolderModel.findOne({ userId });
       
       if (response && response.folders) {
         response.folders.sort((a, b) => a.name.localeCompare(b.name));
@@ -49,8 +47,7 @@ const userFolderService = {
 
       return errorMessage;
     }
-  },
-  
+  },  
   createFolderRoot: async (createFolderRoot: ICreateFolderRoot): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const { userId } = createFolderRoot;
