@@ -18,49 +18,48 @@ import {
   authResetPasswordSchema,
   authVerifyEmailSchema
 } from '@/schemas/authSchema';
+import verifyToken from '@/handlers/verifyTokenHandler';
 
 const authRoute = async (fastify: FastifyInstance) => {
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/register',
-      { schema: authRegisterSchema },
-      authRegisterController
-    );
+  const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
 
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/login',
-      { schema: authLoginSchema },
-      authLoginController
+  routeOptions.post('/auth/register',
+    { schema: authRegisterSchema },
+    authRegisterController
   );
 
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/logout',
-      { schema: { hide: true } },
-      authLogoutController
+  routeOptions.post('/auth/login',
+    { schema: authLoginSchema },
+    authLoginController
+  );
+
+  routeOptions.post('/auth/logout',
+    {
+      schema: { hide: true },
+      preHandler: [verifyToken]
+    },
+    authLogoutController
   );
   
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/verify-email',
-      { schema: authVerifyEmailSchema },
-      authVerifyEmailController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/resend-link',
-      { schema: authResendLinkSchema },
-      authResendLinkController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/forgot-password',
-      { schema: authForgotPasswordSchema },
-      authForgotPasswordController
-    );
-  
-  fastify.withTypeProvider<ZodTypeProvider>()
-    .post('/auth/reset-password',
-      { schema: authResetPasswordSchema },
-      authResetPasswordController
-    );
+  routeOptions.post('/auth/verify-email',
+    { schema: authVerifyEmailSchema },
+    authVerifyEmailController
+  );
+
+  routeOptions.post('/auth/resend-link',
+    { schema: authResendLinkSchema },
+    authResendLinkController
+  );
+
+  routeOptions.post('/auth/forgot-password',
+    { schema: authForgotPasswordSchema },
+    authForgotPasswordController
+  );
+
+  routeOptions.post('/auth/reset-password',
+    { schema: authResetPasswordSchema },
+    authResetPasswordController
+  );
 };
 
 export default authRoute;
