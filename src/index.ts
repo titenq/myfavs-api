@@ -15,6 +15,7 @@ import apiBaseUrl from '@/helpers/apiBaseUrl';
 import errorHandler from '@/helpers/errorHandler';
 import siteOrigin from '@/helpers/siteOrigin';
 import { fastifySwaggerOptions, fastifySwaggerUiOptions } from '@/helpers/swaggerOptions';
+import configRateLimit from './helpers/configRateLimit';
 
 const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;
 
@@ -54,6 +55,7 @@ app.register(fastifySwagger, fastifySwaggerOptions);
 app.register(fastifySwaggerUi, fastifySwaggerUiOptions);
 
 const startServer = async () => {
+  await configRateLimit(app);
   await indexRoute(app);
 
   await app.listen({
