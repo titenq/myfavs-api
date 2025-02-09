@@ -19,6 +19,7 @@ import { IGenericError } from '@/interfaces/errorInterface';
 import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import siteOrigin from '@/helpers/siteOrigin';
 import UserModel from '@/models/UserModel';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 export const authRegisterController = async (
   request: FastifyRequest<{ Body: IUserBody }>,
@@ -37,7 +38,10 @@ export const authRegisterController = async (
       return errorHandler(response, request, reply);
     }
 
-    const emailVerificationToken = await reply.jwtSign({ _id: response._id }, { expiresIn: '1d' });
+    const emailVerificationToken = await reply.jwtSign(
+      { _id: response._id },
+      { expiresIn: '1d' }
+    );
 
     await UserModel.findByIdAndUpdate(
       { _id: response._id },
@@ -58,11 +62,7 @@ export const authRegisterController = async (
 
     reply.status(201).send(user);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar usuário',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao criar usuário');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -75,7 +75,10 @@ export const authLoginController = async (
   try {
     const { email, password } = request.body;
 
-    const response: IUserResponse | IGenericError = await authService.login(request.server, { email, password });
+    const response: IUserResponse | IGenericError = await authService.login(
+      request.server,
+      { email, password }
+    );
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -103,11 +106,7 @@ export const authLoginController = async (
       .status(200)
       .send(userModified);
   } catch (error) {
-    const errorMessage = {
-      error: true,
-      message: 'erro ao fazer login',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao fazer login');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -126,11 +125,7 @@ export const authLogoutController = async (request: FastifyRequest, reply: Fasti
       .status(200)
       .send({ message: 'logout realizado com sucesso' });
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao fazer logout',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao fazer logout');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -153,11 +148,7 @@ export const authVerifyEmailController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao verificar e-mail',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao verificar e-mail');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -180,11 +171,7 @@ export const authResendLinkController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao reenviar link de verificação',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao reenviar link de verificação');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -207,11 +194,7 @@ export const authForgotPasswordController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao recadastrar senha',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao recadastrar senha');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -234,11 +217,7 @@ export const authResetPasswordController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao resetar senha',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao resetar senha');
 
     errorHandler(errorMessage, request, reply);
   }

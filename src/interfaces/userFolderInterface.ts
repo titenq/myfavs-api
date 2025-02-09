@@ -55,6 +55,10 @@ export interface ICreateLinkSubfolderRequest extends ICreateLinkSubfolderParams 
   link: ILink;
 }
 
+export interface ICreateLinkSubfolderResponse {
+  picture: string;
+}
+
 export interface IDeleteLinkParams extends IUserId { }
 
 export interface IDeleteLinkBody {

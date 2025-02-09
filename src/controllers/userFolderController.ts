@@ -13,6 +13,7 @@ import {
   ICreateLinkSubfolderBody,
   ICreateLinkSubfolderParams,
   ICreateLinkSubfolderRequest,
+  ICreateLinkSubfolderResponse,
   ICreateSubfolderBody,
   ICreateSubfolderParams,
   ICreateSubfolderRequest,
@@ -35,6 +36,7 @@ import {
   IGetFoldersByUserIdRequest,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{
@@ -58,11 +60,7 @@ export const getFoldersByUserIdController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao buscar pastas do usuário',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao buscar pastas do usuário');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -93,11 +91,7 @@ export const createFolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar pasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao criar pasta');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -129,11 +123,7 @@ export const createLinkController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar link',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao criar link');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -165,11 +155,7 @@ export const createSubfolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar link',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao criar link');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -192,7 +178,7 @@ export const createLinkSubfolderController = async (
       subfolderName
     };
 
-    const response: { picture: string } | IGenericError = await userFolderService.createLinkSubfolder(createLinkSubfolderRequest);
+    const response: ICreateLinkSubfolderResponse | IGenericError = await userFolderService.createLinkSubfolder(createLinkSubfolderRequest);
 
     if ('error' in response) {
       errorHandler(response, request, reply);
@@ -202,11 +188,7 @@ export const createLinkSubfolderController = async (
 
     reply.status(200).send(response);
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar link na subpasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao criar link na subpasta');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -226,9 +208,9 @@ export const deleteLinkController = async (
       deleteLink: request.body
     };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteLink(deleteLinkRequest);
+    const response: void | IGenericError = await userFolderService.deleteLink(deleteLinkRequest);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -236,11 +218,7 @@ export const deleteLinkController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao deletar link',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao deletar link');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -262,9 +240,9 @@ export const editFolderController = async (
       editFolderName
     };
 
-    const response: { ok: true } | IGenericError = await userFolderService.editFolder(editFolderRequest);
+    const response: void | IGenericError = await userFolderService.editFolder(editFolderRequest);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -272,11 +250,7 @@ export const editFolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao editar pasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao editar pasta');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -297,9 +271,9 @@ export const deleteFolderController = async (
       deleteFolderId
     };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteFolder(deleteFolderRequest);
+    const response: void | IGenericError = await userFolderService.deleteFolder(deleteFolderRequest);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -307,11 +281,7 @@ export const deleteFolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao deletar pasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao deletar pasta');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -334,9 +304,9 @@ export const editSubfolderController = async (
       editSubfolderName
     };
 
-    const response: { ok: true } | IGenericError = await userFolderService.editSubfolder(editSubfolderRequest);
+    const response: void | IGenericError = await userFolderService.editSubfolder(editSubfolderRequest);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -344,11 +314,7 @@ export const editSubfolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao editar subpasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao editar subpasta');
 
     errorHandler(errorMessage, request, reply);
   }
@@ -370,9 +336,9 @@ export const deleteSubfolderController = async (
       deleteSubfolderName
     };
 
-    const response: { delete: boolean } | IGenericError = await userFolderService.deleteSubfolder(deleteSubfolderRequest);
+    const response: void | IGenericError = await userFolderService.deleteSubfolder(deleteSubfolderRequest);
 
-    if ('error' in response) {
+    if (response && 'error' in response) {
       errorHandler(response, request, reply);
 
       return;
@@ -380,11 +346,7 @@ export const deleteSubfolderController = async (
 
     reply.status(204).send();
   } catch (error) {
-    const errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao deletar subpasta',
-      statusCode: 400
-    };
+    const errorMessage = createErrorMessage('erro ao deletar subpasta');
 
     errorHandler(errorMessage, request, reply);
   }

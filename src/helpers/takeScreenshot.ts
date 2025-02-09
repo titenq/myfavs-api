@@ -6,6 +6,7 @@ import sharp from 'sharp';
 
 import { IGenericError } from '@/interfaces/errorInterface';
 import { saveFile } from '@/helpers/bucketActions';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {
@@ -65,18 +66,10 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
 
     return fileLocation;
   } catch (error) {
-    let errorMessage: IGenericError = {
-      error: true,
-      message: 'erro ao criar screenshot',
-      statusCode: 400
-    };
+    let errorMessage = createErrorMessage('erro ao criar screenshot');
 
     if (error instanceof Error && error.message.includes('ERR_NAME_NOT_RESOLVED')) {
-      errorMessage = {
-        error: true,
-        message: 'url não encontrada',
-        statusCode: 404
-      };
+      errorMessage = createErrorMessage('url não encontrada', 404);
     }
 
     return errorMessage;

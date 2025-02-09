@@ -24,6 +24,7 @@ import sendVerificationEmail from '@/helpers/sendVerificationEmail';
 import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
 import userFolderService from '@/services/userFolderService';
 import { IJwtError } from '@/interfaces/jwtInterface';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -31,31 +32,23 @@ const authService = {
       const userExists = await userService.getUserByEmail(user.email);
 
       if (userExists) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'e-mail já cadastrado',
-          statusCode: 409
-        };
+        const errorMessage = createErrorMessage('e-mail já cadastrado', 409);
 
         return errorMessage;
       }
       
       const userCreated: IUserResponse = await UserModel.create(user);
 
-      await userFolderService.createFolderRoot(userCreated._id.toString());
+      await userFolderService.createFolderRoot({ userId: userCreated._id.toString() });
 
       return userCreated;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar usuário',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao criar usuário');
 
       return errorMessage;
     }
   },
-
+  
   login: async (fastify: FastifyInstance, loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
     try {
       const { email, password } = loginData;
@@ -63,11 +56,7 @@ const authService = {
       const user: IUserResponse | null = await userService.getUserByEmail(email);
 
       if (!user) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'e-mail e/ou senha incorreta',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('e-mail e/ou senha incorreta', 404);
 
         return errorMessage;
       }
@@ -77,11 +66,7 @@ const authService = {
       }
 
       if (!user.isEmailVerified) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'usuário não verificou o e-mail',
-          statusCode: 403
-        };
+        const errorMessage = createErrorMessage('usuário não verificou o e-mail', 403);
 
         return errorMessage;
       }
@@ -90,11 +75,7 @@ const authService = {
       const hash = pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
       if (hash !== storedHash) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'e-mail e/ou senha incorreta',
-          statusCode: 401
-        };
+        const errorMessage = createErrorMessage('e-mail e/ou senha incorreta', 401);
 
         return errorMessage;
       }
@@ -102,20 +83,12 @@ const authService = {
       return user;
     } catch (error) {
       if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'token expirado',
-          statusCode: 401
-        };
+        const errorMessage = createErrorMessage('token expirado', 401);
 
         return errorMessage;
       }
 
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao fazer login',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao fazer login');
 
       return errorMessage;
     }
@@ -131,11 +104,7 @@ const authService = {
       });
 
       if (!user) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'erro ao verificar e-mail',
-          statusCode: 400
-        };
+        const errorMessage = createErrorMessage('erro ao verificar e-mail');
 
         return errorMessage;
       }
@@ -147,11 +116,7 @@ const authService = {
       ).exec();
 
       if (!userVerified) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'erro ao verificar e-mail',
-          statusCode: 400
-        };
+        const errorMessage = createErrorMessage('erro ao verificar e-mail');
 
         return errorMessage;
       }
@@ -166,20 +131,12 @@ const authService = {
       return userVerifiedModified;
     } catch (error) {
       if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'token expirado',
-          statusCode: 401
-        };
+        const errorMessage = createErrorMessage('token expirado', 401);
 
         return errorMessage;
       }
 
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao verificar e-mail',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao verificar e-mail');
 
       return errorMessage;
     }
@@ -192,21 +149,13 @@ const authService = {
       const user = await UserModel.findOne({ email });
 
       if (!user) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'usuário não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('usuário não encontrado', 404);
 
         return errorMessage;
       }
 
       if (user.isEmailVerified) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'O e-mail já foi verificado',
-          statusCode: 400
-        };
+        const errorMessage = createErrorMessage('e-mail já verificado');
 
         return errorMessage;
       }
@@ -225,11 +174,7 @@ const authService = {
 
       return responseMessage;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao reenviar link de verificação',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao reenviar link de verificação');
 
       return errorMessage;
     }
@@ -242,11 +187,7 @@ const authService = {
       const user = await UserModel.findOne({ email });
 
       if (!user) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'usuário não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('usuário não encontrado', 404);
 
         return errorMessage;
       }
@@ -265,11 +206,7 @@ const authService = {
 
       return responseMessage;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao enviar link para recadastrar senha',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao enviar link para recadastrar senha');
 
       return errorMessage;
     }
@@ -286,11 +223,7 @@ const authService = {
       });
 
       if (!user) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'token não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('token não encontrado', 404);
 
         return errorMessage;
       }
@@ -307,20 +240,12 @@ const authService = {
       return responseMessage;
     } catch (error) {
       if ((error as IJwtError).code === 'FAST_JWT_EXPIRED') {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'token expirado',
-          statusCode: 401
-        };
+        const errorMessage = createErrorMessage('token expirado', 401);
 
         return errorMessage;
       }
 
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao resetar senha',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao resetar senha');
 
       return errorMessage;
     }

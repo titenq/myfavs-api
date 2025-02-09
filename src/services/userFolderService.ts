@@ -8,9 +8,9 @@ import {
   ICreateFolderRoot,
   ICreateLinkRequest,
   ICreateLinkSubfolderRequest,
+  ICreateLinkSubfolderResponse,
   ICreateSubfolderRequest,
   IDeleteFolderRequest,
-  IDeleteLinkBody,
   IDeleteLinkRequest,
   IDeleteSubfolderRequest,
   IEditFolderRequest,
@@ -21,6 +21,7 @@ import {
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 import { deleteFile, deleteMultipleFiles } from '@/helpers/bucketActions';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 const { ObjectId } = Types;
 
@@ -37,22 +38,14 @@ const userFolderService = {
       }
 
       if (!response) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
 
       return response;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao buscar pastas do usuário',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao buscar pastas do usuário');
 
       return errorMessage;
     }
@@ -75,22 +68,14 @@ const userFolderService = {
       const response = await UserFolderModel.create(rootFolder);
 
       if (!response) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
 
       return response.toObject() as IUserFolderResponse;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar pasta favoritos',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao criar pasta favoritos');
 
       return errorMessage;
     }
@@ -102,11 +87,7 @@ const userFolderService = {
       const userFolders = await UserFolderModel.findOne({ userId });
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
@@ -121,11 +102,7 @@ const userFolderService = {
 
       return;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar pasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao criar pasta', 400);
 
       return errorMessage;
     }
@@ -149,11 +126,7 @@ const userFolderService = {
       );
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
@@ -162,12 +135,7 @@ const userFolderService = {
 
       return response.toObject() as IUserFolderResponse;
     } catch (error) {
-      console.log(error)
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar link',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao criar link');
 
       return errorMessage;
     }
@@ -183,11 +151,7 @@ const userFolderService = {
       );
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
@@ -196,17 +160,13 @@ const userFolderService = {
 
       return response.toObject() as IUserFolderResponse;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar subpasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao criar subpasta', 400);
 
       return errorMessage;
     }
   },
 
-  createLinkSubfolder: async (createLinkSubfolderRequest: ICreateLinkSubfolderRequest): Promise<{ picture: string } | IGenericError> => {
+  createLinkSubfolder: async (createLinkSubfolderRequest: ICreateLinkSubfolderRequest): Promise<ICreateLinkSubfolderResponse | IGenericError> => {
     try {
       const { userId, link, folderId, subfolderName } = createLinkSubfolderRequest;
       const screenshotPath = await takeScreenshot(link.url, new ObjectId().toString());
@@ -238,30 +198,26 @@ const userFolderService = {
       );
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
 
       await userFolders.save();
 
-      return { picture: screenshotPath };
-    } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao criar link',
-        statusCode: 400
+      const createLinkSubfolderResponse: ICreateLinkSubfolderResponse = {
+        picture: screenshotPath
       };
+
+      return createLinkSubfolderResponse;
+    } catch (error) {
+      const errorMessage = createErrorMessage('erro ao criar link', 400);
 
       return errorMessage;
     }
   },
 
-  deleteLink: async (deleteLinkRequest: IDeleteLinkRequest): Promise<{ delete: true} | IGenericError> => {
+  deleteLink: async (deleteLinkRequest: IDeleteLinkRequest): Promise<void | IGenericError> => {
     try {
       const { userId, deleteLink } = deleteLinkRequest;
       const { folderId, linkUrl, subfolderName, linkPicture } = deleteLink;
@@ -307,19 +263,15 @@ const userFolderService = {
         );
       }
 
-      return { delete: true };
+      return;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao deletar link',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao deletar link');
 
       return errorMessage;
     }
   },
 
-  editFolder: async (editFolderRequest: IEditFolderRequest): Promise<{ ok: true } | IGenericError> => {
+  editFolder: async (editFolderRequest: IEditFolderRequest): Promise<void | IGenericError> => {
     try {
       const { userId, editFolderId, editFolderName } = editFolderRequest;
       const userFolders = await UserFolderModel.findOneAndUpdate(
@@ -336,28 +288,20 @@ const userFolderService = {
       );
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
 
-      return { ok: true };
+      return;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao editar pasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao editar pasta');
 
       return errorMessage;
     }
   },
 
-  deleteFolder: async (deleteFolderRequest: IDeleteFolderRequest): Promise<{ delete: true } | IGenericError> => {
+  deleteFolder: async (deleteFolderRequest: IDeleteFolderRequest): Promise<void | IGenericError> => {
     try {
       const { userId, deleteFolderId } = deleteFolderRequest;
       const userFolder = await UserFolderModel.findOne({ 
@@ -366,11 +310,9 @@ const userFolderService = {
       });
 
       if (!userFolder) {
-        return {
-          error: true,
-          message: 'Pasta não encontrada',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('Pasta não encontrada', 404);
+
+        return errorMessage;
       }
 
       const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
@@ -381,24 +323,24 @@ const userFolderService = {
       ];
 
       const deleteResult = await deleteMultipleFiles(allLinks);
-      if (deleteResult !== true) return deleteResult;
+      if (deleteResult !== true) {
+        return deleteResult;
+      }
 
       await UserFolderModel.updateOne(
         { userId },
         { $pull: { folders: { _id: deleteFolderId } } }
       );
 
-      return { delete: true };
+      return;
     } catch (error) {
-      return {
-        error: true,
-        message: 'erro ao deletar pasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao deletar pasta');
+
+      return errorMessage;
     }
   },
 
-  editSubfolder: async (editSubfolderRequest: IEditSubfolderRequest): Promise<{ ok: true } | IGenericError> => {
+  editSubfolder: async (editSubfolderRequest: IEditSubfolderRequest): Promise<void | IGenericError> => {
     try {
       const {
         userId,
@@ -428,28 +370,20 @@ const userFolderService = {
       );
 
       if (!userFolders) {
-        const errorMessage: IGenericError = {
-          error: true,
-          message: 'userId não encontrado',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
 
         return errorMessage;
       }
 
-      return { ok: true };
+      return;
     } catch (error) {
-      const errorMessage: IGenericError = {
-        error: true,
-        message: 'erro ao editar subpasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao editar subpasta');
 
       return errorMessage;
     }
   },
 
-  deleteSubfolder: async (deleteSubfolderRequest: IDeleteSubfolderRequest): Promise<{ delete: true } | IGenericError> => {
+  deleteSubfolder: async (deleteSubfolderRequest: IDeleteSubfolderRequest): Promise<void | IGenericError> => {
     try {
       const {
         userId,
@@ -463,22 +397,18 @@ const userFolderService = {
       });
 
       if (!userFolder) {
-        return {
-          error: true,
-          message: 'Subpasta não encontrada',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('Subpasta não encontrada', 404);
+
+        return errorMessage;
       }
 
       const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
       const subfolder = folder.subfolders?.find(s => s.name === deleteSubfolderName);
 
       if (!subfolder) {
-        return {
-          error: true,
-          message: 'Subpasta não encontrada',
-          statusCode: 404
-        };
+        const errorMessage = createErrorMessage('Subpasta não encontrada', 404);
+
+        return errorMessage;
       }
 
       const deleteResult = await deleteMultipleFiles(subfolder.links || []);
@@ -492,14 +422,13 @@ const userFolderService = {
         { $pull: { 'folders.$.subfolders': { name: deleteSubfolderName } } }
       );
 
-      return { delete: true };
+      return;
     } catch (error) {
-      return {
-        error: true,
-        message: 'erro ao deletar subpasta',
-        statusCode: 400
-      };
+      const errorMessage = createErrorMessage('erro ao deletar subpasta');
+
+      return errorMessage;
     }
-  }};
+  }
+};
 
 export default userFolderService;
