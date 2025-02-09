@@ -47,7 +47,8 @@ const userFolderService = {
 
       return errorMessage;
     }
-  },  
+  },
+  
   createFolderRoot: async (createFolderRoot: ICreateFolderRoot): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const { userId } = createFolderRoot;
