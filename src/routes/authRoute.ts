@@ -29,7 +29,9 @@ const authRoute = async (fastify: FastifyInstance) => {
   );
 
   routeOptions.post('/auth/login',
-    { schema: authLoginSchema },
+    {
+      schema: authLoginSchema
+    },
     authLoginController
   );
 

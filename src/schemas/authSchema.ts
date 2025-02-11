@@ -43,10 +43,12 @@ const authLoginSchema = {
   tags: ['auth'],
   body: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-    password: passwordSchema()
+    password: passwordSchema(),
+    recaptchaToken: z.string(genMsgError('recaptchaToken', Type.STRING, Required.TRUE))
   })
     .describe(`<pre><code><b>*email:</b> string
 <b>*password:</b> string
+<b>*recaptchaToken:</b> string
 </code></pre>`),
   response: {
     200: z.object({

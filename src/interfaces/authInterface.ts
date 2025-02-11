@@ -1,6 +1,7 @@
 export interface IAuthLoginBody {
   email: string;
   password: string;
+  recaptchaToken?: string | null;
 }
 
 export interface IAuthVerifyEmail {

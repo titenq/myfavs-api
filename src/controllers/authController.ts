@@ -73,11 +73,11 @@ export const authLoginController = async (
   reply: FastifyReply
 ) => {
   try {
-    const { email, password } = request.body;
+    const { email, password, recaptchaToken } = request.body;
 
     const response: IUserResponse | IGenericError = await authService.login(
       request.server,
-      { email, password }
+      { email, password, recaptchaToken }
     );
 
     if ('error' in response) {
