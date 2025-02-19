@@ -21,6 +21,9 @@ const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;
 
 const app = fastify();
 
+const test = 'test';
+console.log(test);
+
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.setErrorHandler(errorHandler);

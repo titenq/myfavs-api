@@ -18,7 +18,6 @@ import {
   authResetPasswordSchema,
   authVerifyEmailSchema
 } from '@/schemas/authSchema';
-import verifyToken from '@/handlers/verifyTokenHandler';
 
 const authRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
@@ -29,16 +28,13 @@ const authRoute = async (fastify: FastifyInstance) => {
   );
 
   routeOptions.post('/auth/login',
-    {
-      schema: authLoginSchema
-    },
+    { schema: authLoginSchema },
     authLoginController
   );
 
   routeOptions.post('/auth/logout',
     {
-      schema: { hide: true },
-      preHandler: [verifyToken]
+      schema: { hide: true }
     },
     authLogoutController
   );
