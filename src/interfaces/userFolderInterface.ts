@@ -7,6 +7,11 @@ export interface ILink {
   isPrivate: boolean;
 }
 
+export interface ILinkResponse extends ILink {
+  userId: string;
+  username: string;
+}
+
 interface IUserId {
   userId: string;
 }

@@ -17,12 +17,13 @@ import {
   IEditSubfolderRequest,
   IFolder,
   IGetFoldersByUserIdParams,
-  ILink,
+  ILinkResponse,
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 import { deleteFile, deleteMultipleFiles } from '@/helpers/bucketActions';
 import createErrorMessage from '@/helpers/createErrorMessage';
+import UserModel from '@/models/UserModel';
 
 const { ObjectId } = Types;
 
@@ -231,25 +232,25 @@ const userFolderService = {
 
       if (!subfolderName) {
         await UserFolderModel.updateOne(
-          { 
+          {
             userId,
             'folders._id': folderId
           },
-          { 
-            $pull: { 
-              'folders.$.links': { url: linkUrl } 
-            } 
+          {
+            $pull: {
+              'folders.$.links': { url: linkUrl }
+            }
           }
         );
       } else {
         await UserFolderModel.updateOne(
-          { 
+          {
             userId,
             'folders._id': folderId,
             'folders.subfolders.name': subfolderName
           },
-          { 
-            $pull: { 
+          {
+            $pull: {
               'folders.$[folder].subfolders.$[subfolder].links': { url: linkUrl }
             }
           },
@@ -303,9 +304,9 @@ const userFolderService = {
   deleteFolder: async (deleteFolderRequest: IDeleteFolderRequest): Promise<void | IGenericError> => {
     try {
       const { userId, deleteFolderId } = deleteFolderRequest;
-      const userFolder = await UserFolderModel.findOne({ 
+      const userFolder = await UserFolderModel.findOne({
         userId,
-        'folders._id': deleteFolderId 
+        'folders._id': deleteFolderId
       });
 
       if (!userFolder) {
@@ -429,9 +430,9 @@ const userFolderService = {
     }
   },
 
-  getLinks: async (): Promise<ILink[] | IGenericError> => {
+  getLinks: async (): Promise<ILinkResponse[] | IGenericError> => {
     try {
-      const response = await UserFolderModel.aggregate([
+      const links = await UserFolderModel.aggregate([
         { $unwind: "$folders" },
         { 
           $facet: {
@@ -439,8 +440,9 @@ const userFolderService = {
               { $unwind: "$folders.links" },
               { $match: { "folders.links.isPrivate": false } },
               { $project: { 
+                userId: "$userId",
                 url: "$folders.links.url",
-                picture: "$folders.links.picture",
+                picture: "$folders.links.picture", 
                 description: "$folders.links.description",
                 isPrivate: "$folders.links.isPrivate"
               }}
@@ -450,9 +452,10 @@ const userFolderService = {
               { $unwind: "$folders.subfolders.links" },
               { $match: { "folders.subfolders.links.isPrivate": false } },
               { $project: {
+                userId: "$userId",
                 url: "$folders.subfolders.links.url",
                 picture: "$folders.subfolders.links.picture",
-                description: "$folders.subfolders.links.description",
+                description: "$folders.subfolders.links.description", 
                 isPrivate: "$folders.subfolders.links.isPrivate"
               }}
             ]
@@ -465,21 +468,27 @@ const userFolderService = {
         },
         { $unwind: "$allLinks" },
         { $sample: { size: 10 } },
-        {
-          $replaceRoot: { newRoot: "$allLinks" }
-        }
+        { $replaceRoot: { newRoot: "$allLinks" } }
       ]);
 
-      if (!response || response.length === 0) {
+      if (!links || links.length === 0) {
         const errorMessage = createErrorMessage('links não encontrados', 404);
-
         return errorMessage;
       }
 
-      return response;
+      const linksWithUsernames = await Promise.all(
+        links.map(async (link) => {
+          const user = await UserModel.findById(link.userId);
+          return {
+            ...link,
+            username: user?.name || ''
+          };
+        })
+      );
+
+      return linksWithUsernames;
     } catch (error) {
       const errorMessage = createErrorMessage('erro ao buscar links');
-
       return errorMessage;
     }
   },
