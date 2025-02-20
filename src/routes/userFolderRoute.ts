@@ -24,7 +24,8 @@ import {
   deleteSubfolderController,
   editFolderController,
   editSubfolderController,
-  getFoldersByUserIdController
+  getFoldersByUserIdController,
+  getLinksController
 } from '@/controllers/userFolderController';
 import {
   ICreateFolderBody,
@@ -49,6 +50,11 @@ import {
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
+
+  routeOptions.get('/folders/links',
+    { schema: { hide: true } },
+    getLinksController
+  );
 
   routeOptions.get('/folders/:userId',
     { schema: userFoldersGetByUserIdSchema },

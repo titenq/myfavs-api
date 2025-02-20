@@ -351,3 +351,24 @@ export const deleteSubfolderController = async (
     errorHandler(errorMessage, request, reply);
   }
 };
+
+export const getLinksController = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const response = await userFolderService.getLinks();
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage = createErrorMessage('erro ao buscar links');
+
+    errorHandler(errorMessage, request, reply);
+  }
+};

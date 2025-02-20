@@ -17,6 +17,7 @@ import {
   IEditSubfolderRequest,
   IFolder,
   IGetFoldersByUserIdParams,
+  ILink,
   IUserFolderCreateRoot,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
@@ -426,7 +427,62 @@ const userFolderService = {
 
       return errorMessage;
     }
-  }
+  },
+
+  getLinks: async (): Promise<ILink[] | IGenericError> => {
+    try {
+      const response = await UserFolderModel.aggregate([
+        { $unwind: "$folders" },
+        { 
+          $facet: {
+            folderLinks: [
+              { $unwind: "$folders.links" },
+              { $match: { "folders.links.isPrivate": false } },
+              { $project: { 
+                url: "$folders.links.url",
+                picture: "$folders.links.picture",
+                description: "$folders.links.description",
+                isPrivate: "$folders.links.isPrivate"
+              }}
+            ],
+            subfolderLinks: [
+              { $unwind: "$folders.subfolders" },
+              { $unwind: "$folders.subfolders.links" },
+              { $match: { "folders.subfolders.links.isPrivate": false } },
+              { $project: {
+                url: "$folders.subfolders.links.url",
+                picture: "$folders.subfolders.links.picture",
+                description: "$folders.subfolders.links.description",
+                isPrivate: "$folders.subfolders.links.isPrivate"
+              }}
+            ]
+          }
+        },
+        { 
+          $project: {
+            allLinks: { $concatArrays: ["$folderLinks", "$subfolderLinks"] }
+          }
+        },
+        { $unwind: "$allLinks" },
+        { $sample: { size: 10 } },
+        {
+          $replaceRoot: { newRoot: "$allLinks" }
+        }
+      ]);
+
+      if (!response || response.length === 0) {
+        const errorMessage = createErrorMessage('links não encontrados', 404);
+
+        return errorMessage;
+      }
+
+      return response;
+    } catch (error) {
+      const errorMessage = createErrorMessage('erro ao buscar links');
+
+      return errorMessage;
+    }
+  },
 };
 
 export default userFolderService;
