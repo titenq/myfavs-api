@@ -9,10 +9,6 @@ export interface IAuthLoginBody {
 
 export interface IAuthLoginHeaders extends IXRecaptchaToken { }
 
-export interface IAuthLoginService extends IAuthLoginBody {
-  recaptchaToken: string;
-}
-
 export interface IAuthVerifyEmail {
   token: string;
 }
@@ -31,10 +27,6 @@ export interface IAuthForgotPasswordHeaders extends IXRecaptchaToken { }
 
 export interface IAuthForgotPasswordResponse {
   message: string;
-}
-
-export interface IAuthForgotPasswordService extends IAuthForgotPasswordBody {
-  recaptchaToken: string;
 }
 
 export interface IResendLinkBody {

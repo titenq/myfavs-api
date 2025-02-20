@@ -18,6 +18,8 @@ import {
   authResetPasswordSchema,
   authVerifyEmailSchema
 } from '@/schemas/authSchema';
+import { IAuthForgotPasswordBody, IAuthForgotPasswordHeaders, IAuthLoginBody, IAuthLoginHeaders } from '@/interfaces/authInterface';
+import verifyRecaptcha from '@/handlers/verifyRecaptchaHandler';
 
 const authRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
@@ -27,8 +29,14 @@ const authRoute = async (fastify: FastifyInstance) => {
     authRegisterController
   );
 
-  routeOptions.post('/auth/login',
-    { schema: authLoginSchema },
+  routeOptions.post<{
+    Headers: IAuthLoginHeaders,
+    Body: IAuthLoginBody
+  }>('/auth/login',
+    {
+      schema: authLoginSchema,
+      preHandler: [verifyRecaptcha]
+    },
     authLoginController
   );
 
@@ -49,8 +57,14 @@ const authRoute = async (fastify: FastifyInstance) => {
     authResendLinkController
   );
 
-  routeOptions.post('/auth/forgot-password',
-    { schema: authForgotPasswordSchema },
+  routeOptions.post<{
+    Body: IAuthForgotPasswordBody,
+    Headers: IAuthForgotPasswordHeaders
+  }>('/auth/forgot-password',
+    {
+      schema: authForgotPasswordSchema,
+      preHandler: [verifyRecaptcha]
+    },
     authForgotPasswordController
   );
 

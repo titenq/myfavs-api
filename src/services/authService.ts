@@ -15,8 +15,7 @@ import { IGenericError } from '@/interfaces/errorInterface';
 import {
   IAuthForgotPasswordBody,
   IAuthForgotPasswordResponse,
-  IAuthForgotPasswordService,
-  IAuthLoginService,
+  IAuthLoginBody,
   IAuthVerifyEmail,
   IDecodedToken,
   IResendLinkBody,
@@ -55,19 +54,9 @@ const authService = {
     }
   },
   
-  login: async (fastify: FastifyInstance, loginData: IAuthLoginService): Promise<IUserResponse | IGenericError> => {
+  login: async (fastify: FastifyInstance, loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
     try {
-      const { email, password, recaptchaToken } = loginData;
-
-      const captchaResponse = await axios.post(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-      );
-
-      if (!captchaResponse.data.success) {
-        const errorMessage = createErrorMessage('reCAPTCHA inválido');
-
-        return errorMessage;
-      }
+      const { email, password } = loginData;
 
       const user: IUserResponse | null = await userService.getUserByEmail(email);
 
@@ -196,19 +185,9 @@ const authService = {
     }
   },
 
-  forgotPassword: async (fastify: FastifyInstance, forgotPasswordService: IAuthForgotPasswordService): Promise<IAuthForgotPasswordResponse | IGenericError> => {
+  forgotPassword: async (fastify: FastifyInstance, forgotPassword: IAuthForgotPasswordBody): Promise<IAuthForgotPasswordResponse | IGenericError> => {
     try {
-      const { email, recaptchaToken } = forgotPasswordService;
-
-      const captchaResponse = await axios.post(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-      );
-
-      if (!captchaResponse.data.success) {
-        const errorMessage = createErrorMessage('reCAPTCHA inválido');
-
-        return errorMessage;
-      }
+      const { email } = forgotPassword;
 
       const user = await UserModel.findOne({ email });
 

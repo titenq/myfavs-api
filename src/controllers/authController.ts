@@ -81,11 +81,10 @@ export const authLoginController = async (
 ) => {
   try {
     const { email, password } = request.body;
-    const recaptchaToken = request.headers['x-recaptcha-token'] as string;
 
     const response: IUserResponse | IGenericError = await authService.login(
       request.server,
-      { email, password, recaptchaToken }
+      { email, password }
     );
 
     if ('error' in response) {
@@ -194,9 +193,8 @@ export const authForgotPasswordController = async (
 ) => {
   try {
     const { email } = request.body;
-    const recaptchaToken = request.headers['x-recaptcha-token'] as string;
 
-    const response: IAuthForgotPasswordResponse | IGenericError = await authService.forgotPassword(request.server, { email, recaptchaToken });
+    const response: IAuthForgotPasswordResponse | IGenericError = await authService.forgotPassword(request.server, { email });
 
     if ('error' in response) {
       errorHandler(response, request, reply);
