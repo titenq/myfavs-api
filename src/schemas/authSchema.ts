@@ -119,12 +119,14 @@ const authResendLinkSchema = {
 const authForgotPasswordSchema = {
   summary: 'Esqueci a senha',
   tags: ['auth'],
+  headers: z.object({
+    'x-recaptcha-token': z.string(genMsgError('x-recaptcha-token', Type.STRING, Required.TRUE))
+      .describe(`<pre><code><b>*x-recaptcha-token:</b> string</code></pre>`),
+  }),
   body: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-    recaptchaToken: z.string(genMsgError('recaptchaToken', Type.STRING, Required.TRUE))
   })
-    .describe(`<pre><code><b>*email:</b> string
-</code></pre>`),
+    .describe(`<pre><code><b>*email:</b> string</code></pre>`),
   response: {
     200: z.object({
       message: z.string(genMsgError('message', Type.STRING, Required.TRUE))

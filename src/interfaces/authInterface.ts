@@ -23,6 +23,20 @@ export interface IDecodedToken {
   exp: number;
 }
 
+export interface IAuthForgotPasswordBody {
+  email: string;
+}
+
+export interface IAuthForgotPasswordHeaders extends IXRecaptchaToken { }
+
+export interface IAuthForgotPasswordResponse {
+  message: string;
+}
+
+export interface IAuthForgotPasswordService extends IAuthForgotPasswordBody {
+  recaptchaToken: string;
+}
+
 export interface IResendLinkBody {
   email: string;
   recaptchaToken?: string | null;
@@ -36,3 +50,4 @@ export interface IResetPasswordBody {
   token: string;
   password: string;
 }
+

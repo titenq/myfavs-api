@@ -13,6 +13,9 @@ import {
 } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import {
+  IAuthForgotPasswordBody,
+  IAuthForgotPasswordResponse,
+  IAuthForgotPasswordService,
   IAuthLoginService,
   IAuthVerifyEmail,
   IDecodedToken,
@@ -193,9 +196,9 @@ const authService = {
     }
   },
 
-  forgotPassword: async (fastify: FastifyInstance, forgotPasswordBody: IResendLinkBody): Promise<IResendLinkResponse | IGenericError> => {
+  forgotPassword: async (fastify: FastifyInstance, forgotPasswordService: IAuthForgotPasswordService): Promise<IAuthForgotPasswordResponse | IGenericError> => {
     try {
-      const { email, recaptchaToken } = forgotPasswordBody;
+      const { email, recaptchaToken } = forgotPasswordService;
 
       const captchaResponse = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
