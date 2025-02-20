@@ -1,14 +1,16 @@
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { errorSchema, passwordSchema } from '@/schemas/sharedSchema';
+import { errorSchema } from '@/schemas/sharedSchema';
 
-const userBodySchema = z.object({
-  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
-  email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
-    .email(genMsgError('email', Type.EMAIL, Required.NULL)),
-  password: passwordSchema()
-});
+const passwordSchema = () => {
+  return z.string()
+    .min(8, 'A senha deve ter pelo menos 8 caracteres')
+    .refine(password => /[A-Z]/.test(password), 'A senha deve conter pelo menos uma letra maiúscula')
+    .refine(password => /[a-z]/.test(password), 'A senha deve conter pelo menos uma letra minúscula')
+    .refine(password => /\d/.test(password), 'A senha deve conter pelo menos um número')
+    .refine(password => /[@$!%*?&]/.test(password), 'A senha deve conter pelo menos um caractere especial');
+};
 
 const userResponseSchema = z.object({
   _id: z.instanceof(Object).transform(id => id.toString()),
@@ -24,7 +26,15 @@ const authRegisterSchema = {
     'x-recaptcha-token': z.string(genMsgError('x-recaptcha-token', Type.STRING, Required.TRUE))
       .describe(`<pre><code><b>*x-recaptcha-token:</b> string</code></pre>`),
   }),
-  body: userBodySchema
+  body: z.object({
+    name: z.string(genMsgError('name', Type.STRING, Required.TRUE))
+      .min(3, genMsgError('name', Type.MIN, Required.NULL, '3'))
+      .max(10, genMsgError('name', Type.MAX, Required.NULL, '10'))
+      .refine(name => /^[a-z0-9_-]+$/.test(name), 'O nome de usuário deve conter apenas letras minúsculas, números, hífens (-) ou underscores (_)'),
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+      .email(genMsgError('email', Type.EMAIL, Required.NULL)),
+    password: passwordSchema()
+  })
     .describe(`<pre><code><b>*name:</b> string
 <b>*email:</b> string
 <b>*password:</b> string
@@ -38,7 +48,8 @@ const authRegisterSchema = {
 <b>*createdAt:</b> Date
 </code></pre>`),
     400: errorSchema,
-    409: errorSchema
+    409: errorSchema,
+    500: errorSchema
   }
 };
 
