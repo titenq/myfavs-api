@@ -21,9 +21,6 @@ const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;
 
 const app = fastify();
 
-const test = 'test';
-console.log(test);
-
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.setErrorHandler(errorHandler);
@@ -36,7 +33,8 @@ app.register(fastifyCors, {
   allowedHeaders: [
     'Content-Type',
     'Authorization',
-    'Access-Control-Allow-Origin'
+    'Access-Control-Allow-Origin',
+    'X-Recaptcha-Token'
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 });

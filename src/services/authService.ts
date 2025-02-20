@@ -13,7 +13,7 @@ import {
 } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import {
-  IAuthLoginBody,
+  IAuthLoginService,
   IAuthVerifyEmail,
   IDecodedToken,
   IResendLinkBody,
@@ -52,7 +52,7 @@ const authService = {
     }
   },
   
-  login: async (fastify: FastifyInstance, loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
+  login: async (fastify: FastifyInstance, loginData: IAuthLoginService): Promise<IUserResponse | IGenericError> => {
     try {
       const { email, password, recaptchaToken } = loginData;
 
@@ -195,7 +195,17 @@ const authService = {
 
   forgotPassword: async (fastify: FastifyInstance, forgotPasswordBody: IResendLinkBody): Promise<IResendLinkResponse | IGenericError> => {
     try {
-      const { email } = forgotPasswordBody;
+      const { email, recaptchaToken } = forgotPasswordBody;
+
+      const captchaResponse = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+      );
+
+      if (!captchaResponse.data.success) {
+        const errorMessage = createErrorMessage('reCAPTCHA inválido');
+
+        return errorMessage;
+      }
 
       const user = await UserModel.findOne({ email });
 

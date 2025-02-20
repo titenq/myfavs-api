@@ -4,6 +4,7 @@ import errorHandler from '@/helpers/errorHandler';
 import authService from '@/services/authService';
 import {
   IAuthLoginBody,
+  IAuthLoginHeaders,
   IAuthVerifyEmail,
   IResendLinkBody,
   IResendLinkResponse,
@@ -69,11 +70,15 @@ export const authRegisterController = async (
 };
 
 export const authLoginController = async (
-  request: FastifyRequest<{ Body: IAuthLoginBody }>,
+  request: FastifyRequest<{
+    Body: IAuthLoginBody,
+    Headers: IAuthLoginHeaders
+  }>,
   reply: FastifyReply
 ) => {
   try {
-    const { email, password, recaptchaToken } = request.body;
+    const { email, password } = request.body;
+    const recaptchaToken = request.headers['x-recaptcha-token'] as string;
 
     const response: IUserResponse | IGenericError = await authService.login(
       request.server,
@@ -182,9 +187,9 @@ export const authForgotPasswordController = async (
   reply: FastifyReply
 ) => {
   try {
-    const { email } = request.body;
+    const { email, recaptchaToken } = request.body;
 
-    const response: IResendLinkResponse | IGenericError = await authService.forgotPassword(request.server, { email });
+    const response: IResendLinkResponse | IGenericError = await authService.forgotPassword(request.server, { email, recaptchaToken });
 
     if ('error' in response) {
       errorHandler(response, request, reply);

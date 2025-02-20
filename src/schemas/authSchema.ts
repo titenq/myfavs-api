@@ -41,14 +41,16 @@ const authRegisterSchema = {
 const authLoginSchema = {
   summary: 'Login',
   tags: ['auth'],
+  headers: z.object({
+    'x-recaptcha-token': z.string(genMsgError('x-recaptcha-token', Type.STRING, Required.TRUE))
+      .describe(`<pre><code><b>*x-recaptcha-token:</b> string</code></pre>`),
+  }),
   body: z.object({
     email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
-    password: passwordSchema(),
-    recaptchaToken: z.string(genMsgError('recaptchaToken', Type.STRING, Required.TRUE))
+    password: passwordSchema()
   })
     .describe(`<pre><code><b>*email:</b> string
 <b>*password:</b> string
-<b>*recaptchaToken:</b> string
 </code></pre>`),
   response: {
     200: z.object({
@@ -118,7 +120,8 @@ const authForgotPasswordSchema = {
   summary: 'Esqueci a senha',
   tags: ['auth'],
   body: z.object({
-    email: z.string(genMsgError('email', Type.STRING, Required.TRUE))
+    email: z.string(genMsgError('email', Type.STRING, Required.TRUE)),
+    recaptchaToken: z.string(genMsgError('recaptchaToken', Type.STRING, Required.TRUE))
   })
     .describe(`<pre><code><b>*email:</b> string
 </code></pre>`),

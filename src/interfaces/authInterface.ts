@@ -1,7 +1,16 @@
+export interface IXRecaptchaToken {
+  'x-recaptcha-token': string;
+}
+
 export interface IAuthLoginBody {
   email: string;
   password: string;
-  recaptchaToken?: string | null;
+}
+
+export interface IAuthLoginHeaders extends IXRecaptchaToken { }
+
+export interface IAuthLoginService extends IAuthLoginBody {
+  recaptchaToken: string;
 }
 
 export interface IAuthVerifyEmail {
@@ -16,6 +25,7 @@ export interface IDecodedToken {
 
 export interface IResendLinkBody {
   email: string;
+  recaptchaToken?: string | null;
 }
 
 export interface IResendLinkResponse {
