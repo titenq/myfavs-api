@@ -17,6 +17,7 @@ import {
   IEditSubfolderRequest,
   IFolder,
   IGetFoldersByUserIdParams,
+  IGetPublicFoldersByUserIdParams,
   ILinkResponse,
   IUserFolderCreateRoot,
   IUserFolderResponse
@@ -32,7 +33,7 @@ const userFolderService = {
     try {
       const { userId } = getFoldersByUserId;
       const response: IUserFolderResponse | null = await UserFolderModel.findOne({ userId });
-      
+
       if (response && response.folders) {
         response.folders.sort((a, b) => a.name.localeCompare(b.name));
       }
@@ -50,7 +51,7 @@ const userFolderService = {
       return errorMessage;
     }
   },
-  
+
   createFolderRoot: async (createFolderRoot: ICreateFolderRoot): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const { userId } = createFolderRoot;
@@ -64,7 +65,7 @@ const userFolderService = {
           }
         ]
       };
-  
+
       const response = await UserFolderModel.create(rootFolder);
 
       if (!response) {
@@ -118,7 +119,7 @@ const userFolderService = {
       }
 
       link.picture = screenshotPath;
-      
+
       const userFolders = await UserFolderModel.findOneAndUpdate(
         { userId, 'folders._id': folderId },
         { $push: { 'folders.$.links': link } },
@@ -224,7 +225,7 @@ const userFolderService = {
 
       if (linkPicture) {
         const deleteResult = await deleteFile(linkPicture);
-        
+
         if (typeof deleteResult === 'object' && 'error' in deleteResult) {
           return deleteResult;
         }
@@ -316,7 +317,7 @@ const userFolderService = {
       }
 
       const folder = userFolder.folders.find(f => f._id?.toString() === deleteFolderId) as IFolder;
-      
+
       const allLinks = [
         ...(folder.links || []),
         ...(folder.subfolders?.flatMap(subfolder => subfolder.links || []) || [])
@@ -434,34 +435,38 @@ const userFolderService = {
     try {
       const links = await UserFolderModel.aggregate([
         { $unwind: "$folders" },
-        { 
+        {
           $facet: {
             folderLinks: [
               { $unwind: "$folders.links" },
               { $match: { "folders.links.isPrivate": false } },
-              { $project: { 
-                userId: "$userId",
-                url: "$folders.links.url",
-                picture: "$folders.links.picture", 
-                description: "$folders.links.description",
-                isPrivate: "$folders.links.isPrivate"
-              }}
+              {
+                $project: {
+                  userId: "$userId",
+                  url: "$folders.links.url",
+                  picture: "$folders.links.picture",
+                  description: "$folders.links.description",
+                  isPrivate: "$folders.links.isPrivate"
+                }
+              }
             ],
             subfolderLinks: [
               { $unwind: "$folders.subfolders" },
               { $unwind: "$folders.subfolders.links" },
               { $match: { "folders.subfolders.links.isPrivate": false } },
-              { $project: {
-                userId: "$userId",
-                url: "$folders.subfolders.links.url",
-                picture: "$folders.subfolders.links.picture",
-                description: "$folders.subfolders.links.description", 
-                isPrivate: "$folders.subfolders.links.isPrivate"
-              }}
+              {
+                $project: {
+                  userId: "$userId",
+                  url: "$folders.subfolders.links.url",
+                  picture: "$folders.subfolders.links.picture",
+                  description: "$folders.subfolders.links.description",
+                  isPrivate: "$folders.subfolders.links.isPrivate"
+                }
+              }
             ]
           }
         },
-        { 
+        {
           $project: {
             allLinks: { $concatArrays: ["$folderLinks", "$subfolderLinks"] }
           }
@@ -489,6 +494,70 @@ const userFolderService = {
       return linksWithUsernames;
     } catch (error) {
       const errorMessage = createErrorMessage('erro ao buscar links');
+      return errorMessage;
+    }
+  },
+
+  getPublicFoldersByUserId: async (getPublicFoldersByUserId: IGetPublicFoldersByUserIdParams): Promise<IUserFolderResponse | IGenericError> => {
+    try {
+      const { userId } = getPublicFoldersByUserId;
+      const [response] = await UserFolderModel.aggregate([
+        { $match: { userId } },
+        {
+          $project: {
+            userId: 1,
+            folders: {
+              $map: {
+                input: "$folders",
+                as: "folder",
+                in: {
+                  _id: "$$folder._id",
+                  name: "$$folder.name",
+                  links: {
+                    $filter: {
+                      input: "$$folder.links",
+                      as: "link",
+                      cond: { $eq: ["$$link.isPrivate", false] }
+                    }
+                  },
+                  subfolders: {
+                    $map: {
+                      input: "$$folder.subfolders",
+                      as: "subfolder",
+                      in: {
+                        _id: "$$subfolder._id",
+                        name: "$$subfolder.name",
+                        links: {
+                          $filter: {
+                            input: "$$subfolder.links",
+                            as: "link",
+                            cond: { $eq: ["$$link.isPrivate", false] }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]);
+
+      if (response && response.folders) {
+        response.folders.sort((a: IFolder, b: IFolder): number => a.name.localeCompare(b.name));
+      }
+
+      if (!response) {
+        const errorMessage = createErrorMessage('userId não encontrado', 404);
+
+        return errorMessage;
+      }
+
+      return response;
+    } catch (error) {
+      const errorMessage = createErrorMessage('erro ao buscar pastas do usuário');
+
       return errorMessage;
     }
   },

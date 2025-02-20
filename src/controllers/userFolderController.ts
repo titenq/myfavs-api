@@ -372,3 +372,31 @@ export const getLinksController = async (
     errorHandler(errorMessage, request, reply);
   }
 };
+
+export const getPublicFoldersByUserIdController = async (
+  request: FastifyRequest<{
+    Params: IGetFoldersByUserIdParams
+  }>,
+  reply: FastifyReply
+) => {
+  try {
+    const { userId } = request.params;
+    const getFoldersByUserIdRequest: IGetFoldersByUserIdRequest = {
+      userId
+    };
+
+    const response: IUserFolderResponse | IGenericError = await userFolderService.getPublicFoldersByUserId(getFoldersByUserIdRequest);
+
+    if ('error' in response) {
+      errorHandler(response, request, reply);
+
+      return;
+    }
+
+    reply.status(200).send(response);
+  } catch (error) {
+    const errorMessage = createErrorMessage('erro ao buscar pastas com links públicos de um usuário');
+
+    errorHandler(errorMessage, request, reply);
+  }
+};

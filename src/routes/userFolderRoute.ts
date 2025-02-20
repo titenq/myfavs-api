@@ -12,7 +12,8 @@ import {
   deleteSubfolderSchema,
   editFolderSchema,
   editSubfolderSchema,
-  userFoldersGetByUserIdSchema
+  userFoldersGetByUserIdSchema,
+  userPublicFoldersGetByUserIdSchema
 } from '@/schemas/userFolderSchema';
 import {
   createFolderController,
@@ -25,7 +26,8 @@ import {
   editFolderController,
   editSubfolderController,
   getFoldersByUserIdController,
-  getLinksController
+  getLinksController,
+  getPublicFoldersByUserIdController
 } from '@/controllers/userFolderController';
 import {
   ICreateFolderBody,
@@ -45,7 +47,9 @@ import {
   IEditFolderBody,
   IEditFolderParams,
   IEditSubfolderBody,
-  IEditSubfolderParams
+  IEditSubfolderParams,
+  IGetFoldersByUserIdParams,
+  IGetPublicFoldersByUserIdParams
 } from '@/interfaces/userFolderInterface';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
@@ -56,8 +60,20 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
     getLinksController
   );
 
-  routeOptions.get('/folders/:userId',
-    { schema: userFoldersGetByUserIdSchema },
+  routeOptions.get<{
+    Params: IGetPublicFoldersByUserIdParams
+  }>('/folders/public/:userId',
+    { schema: userPublicFoldersGetByUserIdSchema },
+    getPublicFoldersByUserIdController
+  );
+
+  routeOptions.get<{
+    Params: IGetFoldersByUserIdParams
+  }>('/folders/:userId',
+    {
+      schema: userFoldersGetByUserIdSchema,
+      preHandler: [verifyToken]
+    },
     getFoldersByUserIdController
   );
 
