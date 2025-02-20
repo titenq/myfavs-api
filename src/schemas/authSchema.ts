@@ -20,6 +20,10 @@ const userResponseSchema = z.object({
 const authRegisterSchema = {
   summary: 'Registrar usuário',
   tags: ['auth'],
+  headers: z.object({
+    'x-recaptcha-token': z.string(genMsgError('x-recaptcha-token', Type.STRING, Required.TRUE))
+      .describe(`<pre><code><b>*x-recaptcha-token:</b> string</code></pre>`),
+  }),
   body: userBodySchema
     .describe(`<pre><code><b>*name:</b> string
 <b>*email:</b> string

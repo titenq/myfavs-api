@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
+import verifyRecaptcha from '@/handlers/verifyRecaptchaHandler';
 import {
   authForgotPasswordController,
   authLoginController,
@@ -18,14 +19,26 @@ import {
   authResetPasswordSchema,
   authVerifyEmailSchema
 } from '@/schemas/authSchema';
-import { IAuthForgotPasswordBody, IAuthForgotPasswordHeaders, IAuthLoginBody, IAuthLoginHeaders } from '@/interfaces/authInterface';
-import verifyRecaptcha from '@/handlers/verifyRecaptchaHandler';
+import {
+  IAuthForgotPasswordBody,
+  IAuthForgotPasswordHeaders,
+  IAuthLoginBody,
+  IAuthLoginHeaders,
+  IAuthRegisterBody,
+  IAuthRegisterHeaders
+} from '@/interfaces/authInterface';
 
 const authRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
 
-  routeOptions.post('/auth/register',
-    { schema: authRegisterSchema },
+  routeOptions.post<{
+    Body: IAuthRegisterBody,
+    Headers: IAuthRegisterHeaders
+  }>('/auth/register',
+    {
+      schema: authRegisterSchema,
+      preHandler: [verifyRecaptcha]
+    },
     authRegisterController
   );
 

@@ -8,6 +8,8 @@ import {
   IAuthForgotPasswordResponse,
   IAuthLoginBody,
   IAuthLoginHeaders,
+  IAuthRegisterBody,
+  IAuthRegisterHeaders,
   IAuthVerifyEmail,
   IResendLinkBody,
   IResendLinkResponse,
@@ -15,7 +17,6 @@ import {
 } from '@/interfaces/authInterface';
 import {
   IEmailVerifiedResponse,
-  IUserBody,
   IUserResponse,
   IUserResponseModified
 } from '@/interfaces/userInterface';
@@ -26,7 +27,10 @@ import UserModel from '@/models/UserModel';
 import createErrorMessage from '@/helpers/createErrorMessage';
 
 export const authRegisterController = async (
-  request: FastifyRequest<{ Body: IUserBody }>,
+  request: FastifyRequest<{
+    Body: IAuthRegisterBody,
+    Headers: IAuthRegisterHeaders
+  }>,
   reply: FastifyReply
 ) => {
   try {

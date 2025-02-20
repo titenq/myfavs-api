@@ -1,6 +1,12 @@
+import { IUserBody } from '@/interfaces/userInterface';
+
 export interface IXRecaptchaToken {
   'x-recaptcha-token': string;
 }
+
+export interface IAuthRegisterBody extends IUserBody { }
+
+export interface IAuthRegisterHeaders extends IXRecaptchaToken { }
 
 export interface IAuthLoginBody {
   email: string;

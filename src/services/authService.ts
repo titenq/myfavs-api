@@ -1,7 +1,6 @@
 import { pbkdf2Sync } from 'node:crypto';
 
 import { FastifyInstance } from 'fastify';
-import axios from 'axios';
 
 import userService from '@/services/userService';
 import UserModel from '@/models/UserModel';
@@ -28,8 +27,6 @@ import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
 import userFolderService from '@/services/userFolderService';
 import { IJwtError } from '@/interfaces/jwtInterface';
 import createErrorMessage from '@/helpers/createErrorMessage';
-
-const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
