@@ -11,6 +11,16 @@ const userService = {
       return null;
     }
   },
+
+  getUserById: async (userId: string) => {
+    try {
+      const user: IUserResponse | null = await UserModel.findOne({ _id: userId }).select('+password');
+
+      return user;
+    } catch (error) {
+      return null;
+    }
+  },
 };
 
 export default userService;
