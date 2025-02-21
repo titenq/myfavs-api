@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+
+import 'dotenv/config';
 import { Upload } from '@aws-sdk/lib-storage';
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 

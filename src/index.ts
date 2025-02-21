@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 
+import 'dotenv/config';
 import fastify from 'fastify';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';

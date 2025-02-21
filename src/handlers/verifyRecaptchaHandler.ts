@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 

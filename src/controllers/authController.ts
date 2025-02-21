@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 import errorHandler from '@/helpers/errorHandler';

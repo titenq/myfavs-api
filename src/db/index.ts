@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import mongoose from 'mongoose';
 
 const { DB_USER, DB_PASSWORD, DB_HOST, DB_APP_NAME } = process.env;

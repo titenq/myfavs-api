@@ -1,5 +1,7 @@
 import { createCipheriv, createDecipheriv } from 'node:crypto';
 
+import 'dotenv/config';
+
 const { ENC_KEY, IV } = process.env;
 
 if (!ENC_KEY || !IV) {

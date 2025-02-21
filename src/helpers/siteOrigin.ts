@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 const { NODE_ENV, ORIGIN } = process.env;
 
 let siteOrigin: string;

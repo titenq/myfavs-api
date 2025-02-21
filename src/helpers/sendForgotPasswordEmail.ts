@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import nodemailer from 'nodemailer';
 
 const sendForgotPasswordEmail = async (userEmail: string, forgotPasswordLink: string) => {
