@@ -2,11 +2,11 @@
   "name": "myfavs-api",
   "version": "1.0.0",
   "description": "API do projeto myfavs",
-  "main": "index.mjs",
+  "main": "dist/index.mjs",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup src --format esm",
-    "start": "node ./src/dist/index.mjs"
+    "start": "node dist/index.mjs"
   },
   "author": "TitenQ <titenq@gmail.com>",
   "license": "GPL-3.0",
