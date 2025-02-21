@@ -472,7 +472,7 @@ const userFolderService = {
           }
         },
         { $unwind: "$allLinks" },
-        { $sample: { size: 10 } },
+        { $sample: { size: 12 } },
         { $replaceRoot: { newRoot: "$allLinks" } }
       ]);
 
