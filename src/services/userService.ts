@@ -5,15 +5,6 @@ import createErrorMessage from '../helpers/createErrorMessage';
 import UserFolderModel from '../models/UserFolderModel';
 import { ILink, IUserFolder } from '../interfaces/userFolderInterface';
 
-interface ISubfolder {
-  links?: ILink[];
-}
-
-interface IFolder {
-  links?: ILink[];
-  subfolders?: ISubfolder[];
-}
-
 const userService = {
   getUserByEmail: async (email: string) => {
     try {
