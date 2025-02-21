@@ -2,10 +2,10 @@
   "name": "myfavs-api",
   "version": "1.0.0",
   "description": "API do projeto myfavs",
-  "main": "dist/index.mjs",
+  "main": "index.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src --format esm --dts",
+    "build": "tsup src --format esm",
     "start": "node dist/index.mjs"
   },
   "author": "TitenQ <titenq@gmail.com>",
