@@ -4,7 +4,7 @@
   "description": "API do projeto myfavs",
   "main": "index.ts",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch @/index.ts",
     "build": "npm install && tsup ./src --format esm",
     "start": "node ./dist/index.mjs"
   },

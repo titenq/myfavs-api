@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import userService from 'src/services/userService';
-import errorHandler from 'src/helpers/errorHandler';
-import createErrorMessage from 'src/helpers/createErrorMessage';
+import userService from '@/services/userService';
+import errorHandler from '@/helpers/errorHandler';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 export const getUserByIdController = async (
   request: FastifyRequest<{ Params: { userId: string } }>,

@@ -1,7 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from 'src/helpers/genMsgError';
+import { genMsgError, Required, Type } from '@/helpers/genMsgError';
 
 const errorSchema = z.object({
   error: z.boolean(genMsgError('error', Type.BOOLEAN, Required.TRUE)),

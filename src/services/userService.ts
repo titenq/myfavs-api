@@ -1,9 +1,9 @@
-import UserModel from 'src/models/UserModel';
-import { IUserResponse, IUsersLinks } from 'src/interfaces/userInterface';
-import { IGenericError } from 'src/interfaces/errorInterface';
-import createErrorMessage from 'src/helpers/createErrorMessage';
-import UserFolderModel from 'src/models/UserFolderModel';
-import { ILink, IUserFolder } from 'src/interfaces/userFolderInterface';
+import UserModel from '@/models/UserModel';
+import { IUserResponse, IUsersLinks } from '@/interfaces/userInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
+import createErrorMessage from '@/helpers/createErrorMessage';
+import UserFolderModel from '@/models/UserFolderModel';
+import { ILink, IUserFolder } from '@/interfaces/userFolderInterface';
 
 interface ISubfolder {
   links?: ILink[];

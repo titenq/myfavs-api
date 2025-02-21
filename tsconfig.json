@@ -3,14 +3,18 @@
   "_version": "20.1.0",
 
   "compilerOptions": {
-    "baseUrl": ".",
     "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
-
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16"
+    "moduleResolution": "node16",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
   }
 }

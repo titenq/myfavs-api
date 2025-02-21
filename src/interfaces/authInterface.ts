@@ -1,4 +1,4 @@
-import { IUserBody } from 'src/interfaces/userInterface';
+import { IUserBody } from '@/interfaces/userInterface';
 
 export interface IXRecaptchaToken {
   'x-recaptcha-token': string;

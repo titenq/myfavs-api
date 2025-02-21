@@ -2,8 +2,8 @@ import 'dotenv/config';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import axios from 'axios';
 
-import errorHandler from 'src/helpers/errorHandler';
-import createErrorMessage from 'src/helpers/createErrorMessage';
+import errorHandler from '@/helpers/errorHandler';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 

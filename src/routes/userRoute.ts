@@ -5,12 +5,12 @@ import {
   getUserByEmailController,
   getUserByIdController,
   getUsersController
-} from 'src/controllers/userController';
+} from '@/controllers/userController';
 import {
   userGetByEmailSchema,
   userGetByIdSchema,
   userGetSchema
-} from 'src/schemas/userSchema';
+} from '@/schemas/userSchema';
 
 const userRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();

@@ -2,15 +2,15 @@ import { pbkdf2Sync } from 'node:crypto';
 
 import { FastifyInstance } from 'fastify';
 
-import userService from 'src/services/userService';
-import UserModel from 'src/models/UserModel';
+import userService from '@/services/userService';
+import UserModel from '@/models/UserModel';
 import {
   IEmailVerifiedResponse,
   IUserBody,
   IUserResponse,
   IUserResponseModified
-} from 'src/interfaces/userInterface';
-import { IGenericError } from 'src/interfaces/errorInterface';
+} from '@/interfaces/userInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
 import {
   IAuthForgotPasswordBody,
   IAuthForgotPasswordResponse,
@@ -20,13 +20,13 @@ import {
   IResendLinkBody,
   IResendLinkResponse,
   IResetPasswordBody
-} from 'src/interfaces/authInterface';
-import siteOrigin from 'src/helpers/siteOrigin';
-import sendVerificationEmail from 'src/helpers/sendVerificationEmail';
-import sendForgotPasswordEmail from 'src/helpers/sendForgotPasswordEmail';
-import userFolderService from 'src/services/userFolderService';
-import { IJwtError } from 'src/interfaces/jwtInterface';
-import createErrorMessage from 'src/helpers/createErrorMessage';
+} from '@/interfaces/authInterface';
+import siteOrigin from '@/helpers/siteOrigin';
+import sendVerificationEmail from '@/helpers/sendVerificationEmail';
+import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
+import userFolderService from '@/services/userFolderService';
+import { IJwtError } from '@/interfaces/jwtInterface';
+import createErrorMessage from '@/helpers/createErrorMessage';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
