@@ -53,3 +53,15 @@ export const getUserByEmailController = async (
     errorHandler(errorMessage, request, reply);
   }
 };
+
+export const getUsersController = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const users = await userService.getUsers();
+
+    reply.status(200).send(users);
+  } catch (error) {
+    const errorMessage = createErrorMessage('erro ao buscar usuários');
+
+    errorHandler(errorMessage, request, reply);
+  }
+};

@@ -28,3 +28,8 @@ export interface IUserResponseModified {
 }
 
 export type IEmailVerifiedResponse = Omit<IUserResponseModified, 'isEmailVerified' | 'emailVerificationToken' | 'forgotPasswordToken'>;
+
+export interface IUsersLinks {
+  name: string;
+  qtdLinks: number;
+}

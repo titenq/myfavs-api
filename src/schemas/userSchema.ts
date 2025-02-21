@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
 import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { _idSchema, errorSchema } from '@/schemas/sharedSchema';
+import { errorSchema } from '@/schemas/sharedSchema';
+
+const usersLinksSchema = z.object({
+  name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),
+  qtdLinks: z.number(genMsgError('qtdLinks', Type.NONNEGATIVE, Required.TRUE))
+})
+  .describe(`<pre><code><b>*name:</b> string
+<b>*qtdLinks:</b> number
+</code></pre>`);
 
 const userGetByIdSchema = {
   summary: 'Buscar usuário por id',
@@ -53,7 +61,18 @@ const userGetByEmailSchema = {
   }
 };
 
+const userGetSchema = {
+  summary: 'Buscar usuários',
+  tags: ['users'],
+  response: {
+    200: z.array(usersLinksSchema),
+    400: errorSchema,
+    404: errorSchema
+  }
+};
+
 export {
   userGetByIdSchema,
-  userGetByEmailSchema
+  userGetByEmailSchema,
+  userGetSchema
 };
