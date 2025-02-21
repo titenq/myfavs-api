@@ -5,7 +5,7 @@
   "main": "dist/index.mjs",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src --format esm",
+    "build": "tsup src --format esm --out-dir dist",
     "start": "node dist/index.mjs"
   },
   "author": "TitenQ <titenq@gmail.com>",
