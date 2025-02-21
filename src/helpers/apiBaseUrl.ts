@@ -7,7 +7,7 @@ let apiBaseUrl: string;
 if (NODE_ENV === 'DEV') {
   apiBaseUrl = `http://localhost:${PORT}`;
 } else {
-  apiBaseUrl = 'https://backend.com';
+  apiBaseUrl = 'https://myfavs-api.onrender.com';
 }
 
 export default apiBaseUrl;
