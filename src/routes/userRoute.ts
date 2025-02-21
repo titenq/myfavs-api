@@ -5,29 +5,29 @@ import {
   getUserByEmailController,
   getUserByIdController,
   getUsersController
-} from '@/controllers/userController';
+} from 'src/controllers/userController';
 import {
   userGetByEmailSchema,
   userGetByIdSchema,
   userGetSchema
-} from '@/schemas/userSchema';
+} from 'src/schemas/userSchema';
 
 const userRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();
 
   routeOptions.get('/users/username/:userId',
-      { schema: userGetByIdSchema },
-      getUserByIdController
+    { schema: userGetByIdSchema },
+    getUserByIdController
   );
-  
+
   routeOptions.get('/users/:email',
-      { schema: userGetByEmailSchema },
-      getUserByEmailController
+    { schema: userGetByEmailSchema },
+    getUserByEmailController
   );
 
   routeOptions.get('/users',
-      { schema: userGetSchema },
-      getUsersController
+    { schema: userGetSchema },
+    getUsersController
   );
 };
 

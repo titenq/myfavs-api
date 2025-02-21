@@ -4,9 +4,9 @@ import fs from 'node:fs';
 import puppeteer from 'puppeteer';
 import sharp from 'sharp';
 
-import { IGenericError } from '@/interfaces/errorInterface';
-import { saveFile } from '@/helpers/bucketActions';
-import createErrorMessage from '@/helpers/createErrorMessage';
+import { IGenericError } from 'src/interfaces/errorInterface';
+import { saveFile } from 'src/helpers/bucketActions';
+import createErrorMessage from 'src/helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {
@@ -52,7 +52,7 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
       })
       .jpeg({ quality: 60 })
       .toFile(filepath);
-    
+
     const fileLocation = await saveFile(filepath, filename);
 
     if (typeof fileLocation === 'object' && 'error' in fileLocation) {

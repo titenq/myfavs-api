@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { _idSchema, errorSchema } from '@/schemas/sharedSchema';
-import { IFolder } from '@/interfaces/userFolderInterface';
+import { genMsgError, Required, Type } from 'src/helpers/genMsgError';
+import { _idSchema, errorSchema } from 'src/schemas/sharedSchema';
+import { IFolder } from 'src/interfaces/userFolderInterface';
 
 const linksSchema = z.object({
   url: z.string(genMsgError('url', Type.STRING, Required.TRUE)),
@@ -184,7 +184,7 @@ const deleteLinkSchema = {
     linkPicture: z.string(genMsgError('linkPicture', Type.STRING, Required.TRUE))
       .nullable()
       .describe('<pre><code><b>linkPicture:</b> string | null</code></pre>')
-  }),  response: {
+  }), response: {
     200: z.object({
       picture: z.string(genMsgError('picture', Type.STRING, Required.TRUE))
         .describe('<pre><code><b>*picture:</b> string</code></pre>')

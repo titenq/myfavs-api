@@ -4,9 +4,6 @@
 
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",

@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 
-import createErrorMessage from '@/helpers/createErrorMessage';
+import createErrorMessage from 'src/helpers/createErrorMessage';
 
 const configRateLimit = async (app: FastifyInstance) => {
   await app.register(rateLimit, {

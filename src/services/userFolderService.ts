@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 
-import takeScreenshot from '@/helpers/takeScreenshot';
-import { IGenericError } from '@/interfaces/errorInterface';
-import UserFolderModel from '@/models/UserFolderModel';
+import takeScreenshot from 'src/helpers/takeScreenshot';
+import { IGenericError } from 'src/interfaces/errorInterface';
+import UserFolderModel from 'src/models/UserFolderModel';
 import {
   ICreateFolderRequest,
   ICreateFolderRoot,
@@ -21,10 +21,10 @@ import {
   ILinkResponse,
   IUserFolderCreateRoot,
   IUserFolderResponse
-} from '@/interfaces/userFolderInterface';
-import { deleteFile, deleteMultipleFiles } from '@/helpers/bucketActions';
-import createErrorMessage from '@/helpers/createErrorMessage';
-import UserModel from '@/models/UserModel';
+} from 'src/interfaces/userFolderInterface';
+import { deleteFile, deleteMultipleFiles } from 'src/helpers/bucketActions';
+import createErrorMessage from 'src/helpers/createErrorMessage';
+import UserModel from 'src/models/UserModel';
 
 const { ObjectId } = Types;
 

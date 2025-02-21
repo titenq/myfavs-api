@@ -1,6 +1,6 @@
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
 
-import mongoose from '@/db';
+import mongoose from 'src/db';
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -46,7 +46,7 @@ UserSchema.pre('save', function (next) {
   const hash = pbkdf2Sync(this.password, salt, 1000, 64, 'sha512').toString('hex');
 
   this.password = `${salt}:${hash}`;
-  
+
   next();
 });
 

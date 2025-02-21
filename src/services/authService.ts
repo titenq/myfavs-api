@@ -2,15 +2,15 @@ import { pbkdf2Sync } from 'node:crypto';
 
 import { FastifyInstance } from 'fastify';
 
-import userService from '@/services/userService';
-import UserModel from '@/models/UserModel';
+import userService from 'src/services/userService';
+import UserModel from 'src/models/UserModel';
 import {
   IEmailVerifiedResponse,
   IUserBody,
   IUserResponse,
   IUserResponseModified
-} from '@/interfaces/userInterface';
-import { IGenericError } from '@/interfaces/errorInterface';
+} from 'src/interfaces/userInterface';
+import { IGenericError } from 'src/interfaces/errorInterface';
 import {
   IAuthForgotPasswordBody,
   IAuthForgotPasswordResponse,
@@ -20,13 +20,13 @@ import {
   IResendLinkBody,
   IResendLinkResponse,
   IResetPasswordBody
-} from '@/interfaces/authInterface';
-import siteOrigin from '@/helpers/siteOrigin';
-import sendVerificationEmail from '@/helpers/sendVerificationEmail';
-import sendForgotPasswordEmail from '@/helpers/sendForgotPasswordEmail';
-import userFolderService from '@/services/userFolderService';
-import { IJwtError } from '@/interfaces/jwtInterface';
-import createErrorMessage from '@/helpers/createErrorMessage';
+} from 'src/interfaces/authInterface';
+import siteOrigin from 'src/helpers/siteOrigin';
+import sendVerificationEmail from 'src/helpers/sendVerificationEmail';
+import sendForgotPasswordEmail from 'src/helpers/sendForgotPasswordEmail';
+import userFolderService from 'src/services/userFolderService';
+import { IJwtError } from 'src/interfaces/jwtInterface';
+import createErrorMessage from 'src/helpers/createErrorMessage';
 
 const authService = {
   createUser: async (user: IUserBody): Promise<IUserResponseModified | IGenericError> => {
@@ -38,7 +38,7 @@ const authService = {
 
         return errorMessage;
       }
-      
+
       const userCreated: IUserResponse = await UserModel.create(user);
 
       await userFolderService.createFolderRoot({ userId: userCreated._id.toString() });
@@ -50,7 +50,7 @@ const authService = {
       return errorMessage;
     }
   },
-  
+
   login: async (fastify: FastifyInstance, loginData: IAuthLoginBody): Promise<IUserResponse | IGenericError> => {
     try {
       const { email, password } = loginData;
@@ -166,7 +166,7 @@ const authService = {
 
       user.emailVerificationToken = token;
       await user.save();
-      
+
       const verificationLink = `${siteOrigin}/verificar-email?token=${token}`;
       await sendVerificationEmail(user.email, verificationLink);
 
@@ -198,7 +198,7 @@ const authService = {
 
       user.forgotPasswordToken = token;
       await user.save();
-      
+
       const forgotPasswordLink = `${siteOrigin}/recadastrar-senha?token=${token}`;
       await sendForgotPasswordEmail(user.email, forgotPasswordLink);
 
@@ -232,7 +232,7 @@ const authService = {
 
       user.password = password;
       user.forgotPasswordToken = null;
-      
+
       await user.save();
 
       const responseMessage: IResendLinkResponse = {

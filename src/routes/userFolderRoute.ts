@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import verifyToken from '@/handlers/verifyTokenHandler';
+import verifyToken from 'src/handlers/verifyTokenHandler';
 import {
   createFolderSchema,
   createLinkSchema,
@@ -14,7 +14,7 @@ import {
   editSubfolderSchema,
   userFoldersGetByUserIdSchema,
   userPublicFoldersGetByUsernameSchema
-} from '@/schemas/userFolderSchema';
+} from 'src/schemas/userFolderSchema';
 import {
   createFolderController,
   createLinkController,
@@ -28,7 +28,7 @@ import {
   getFoldersByUserIdController,
   getLinksController,
   getPublicFoldersByUsernameController
-} from '@/controllers/userFolderController';
+} from 'src/controllers/userFolderController';
 import {
   ICreateFolderBody,
   ICreateFolderParams,
@@ -50,7 +50,7 @@ import {
   IEditSubfolderParams,
   IGetFoldersByUserIdParams,
   IGetPublicFoldersByUsernameParams
-} from '@/interfaces/userFolderInterface';
+} from 'src/interfaces/userFolderInterface';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();

@@ -1,4 +1,4 @@
-import { IGenericError } from '@/interfaces/errorInterface';
+import { IGenericError } from 'src/interfaces/errorInterface';
 
 const createErrorMessage = (
   message: string,

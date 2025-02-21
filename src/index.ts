@@ -11,11 +11,11 @@ import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 
-import indexRoute from '@/routes/indexRoute';
-import apiBaseUrl from '@/helpers/apiBaseUrl';
-import errorHandler from '@/helpers/errorHandler';
-import siteOrigin from '@/helpers/siteOrigin';
-import { fastifySwaggerOptions, fastifySwaggerUiOptions } from '@/helpers/swaggerOptions';
+import indexRoute from 'src/routes/indexRoute';
+import apiBaseUrl from 'src/helpers/apiBaseUrl';
+import errorHandler from 'src/helpers/errorHandler';
+import siteOrigin from 'src/helpers/siteOrigin';
+import { fastifySwaggerOptions, fastifySwaggerUiOptions } from 'src/helpers/swaggerOptions';
 import configRateLimit from './helpers/configRateLimit';
 
 const { PORT, COOKIE_SECRET, JWT_SECRET } = process.env;

@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import errorHandler from '@/helpers/errorHandler';
-import authService from '@/services/authService';
+import errorHandler from 'src/helpers/errorHandler';
+import authService from 'src/services/authService';
 import {
   IAuthForgotPasswordBody,
   IAuthForgotPasswordHeaders,
@@ -15,17 +15,17 @@ import {
   IResendLinkBody,
   IResendLinkResponse,
   IResetPasswordBody
-} from '@/interfaces/authInterface';
+} from 'src/interfaces/authInterface';
 import {
   IEmailVerifiedResponse,
   IUserResponse,
   IUserResponseModified
-} from '@/interfaces/userInterface';
-import { IGenericError } from '@/interfaces/errorInterface';
-import sendVerificationEmail from '@/helpers/sendVerificationEmail';
-import siteOrigin from '@/helpers/siteOrigin';
-import UserModel from '@/models/UserModel';
-import createErrorMessage from '@/helpers/createErrorMessage';
+} from 'src/interfaces/userInterface';
+import { IGenericError } from 'src/interfaces/errorInterface';
+import sendVerificationEmail from 'src/helpers/sendVerificationEmail';
+import siteOrigin from 'src/helpers/siteOrigin';
+import UserModel from 'src/models/UserModel';
+import createErrorMessage from 'src/helpers/createErrorMessage';
 
 export const authRegisterController = async (
   request: FastifyRequest<{
