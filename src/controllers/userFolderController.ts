@@ -34,6 +34,7 @@ import {
   IEditSubfolderRequest,
   IGetFoldersByUserIdParams,
   IGetFoldersByUserIdRequest,
+  IGetPublicFoldersByUsernameParams,
   IUserFolderResponse
 } from '@/interfaces/userFolderInterface';
 import createErrorMessage from '@/helpers/createErrorMessage';
@@ -373,19 +374,16 @@ export const getLinksController = async (
   }
 };
 
-export const getPublicFoldersByUserIdController = async (
+export const getPublicFoldersByUsernameController = async (
   request: FastifyRequest<{
-    Params: IGetFoldersByUserIdParams
+    Params: IGetPublicFoldersByUsernameParams
   }>,
   reply: FastifyReply
 ) => {
   try {
-    const { userId } = request.params;
-    const getFoldersByUserIdRequest: IGetFoldersByUserIdRequest = {
-      userId
-    };
+    const { username } = request.params;
 
-    const response: IUserFolderResponse | IGenericError = await userFolderService.getPublicFoldersByUserId(getFoldersByUserIdRequest);
+    const response: IUserFolderResponse | IGenericError = await userFolderService.getPublicFoldersByUsername({ username });
 
     if ('error' in response) {
       errorHandler(response, request, reply);

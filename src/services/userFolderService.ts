@@ -17,7 +17,7 @@ import {
   IEditSubfolderRequest,
   IFolder,
   IGetFoldersByUserIdParams,
-  IGetPublicFoldersByUserIdParams,
+  IGetPublicFoldersByUsernameParams,
   ILinkResponse,
   IUserFolderCreateRoot,
   IUserFolderResponse
@@ -498,11 +498,20 @@ const userFolderService = {
     }
   },
 
-  getPublicFoldersByUserId: async (getPublicFoldersByUserId: IGetPublicFoldersByUserIdParams): Promise<IUserFolderResponse | IGenericError> => {
+  getPublicFoldersByUsername: async (publicUsername: IGetPublicFoldersByUsernameParams): Promise<IUserFolderResponse | IGenericError> => {
     try {
-      const { userId } = getPublicFoldersByUserId;
+      const { username } = publicUsername;
+
+      const user = await UserModel.findOne({ name: username });
+
+      if (!user) {
+        const errorMessage = createErrorMessage('usuário não encontrado', 404);
+
+        return errorMessage;
+      }
+
       const [response] = await UserFolderModel.aggregate([
-        { $match: { userId } },
+        { $match: { userId: user._id.toString() } },
         {
           $project: {
             userId: 1,

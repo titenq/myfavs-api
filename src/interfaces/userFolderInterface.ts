@@ -133,4 +133,6 @@ export interface IDeleteSubfolderBody {
 
 export interface IDeleteSubfolderRequest extends IDeleteSubfolderParams, IDeleteSubfolderBody { }
 
-export interface IGetPublicFoldersByUserIdParams extends IGetFoldersByUserIdParams { }
+export interface IGetPublicFoldersByUsernameParams {
+  username: string;
+}

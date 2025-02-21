@@ -283,12 +283,12 @@ const deleteSubfolderSchema = {
   }
 };
 
-const userPublicFoldersGetByUserIdSchema = {
+const userPublicFoldersGetByUsernameSchema = {
   summary: 'Buscar pastas com links públicos de um usuário',
   tags: ['userFolder'],
   params: z.object({
-    userId: z.string(genMsgError('userId', Type.STRING, Required.TRUE))
-      .describe('<pre><code><b>*userId:</b> string</code></pre>')
+    username: z.string(genMsgError('username', Type.STRING, Required.TRUE))
+      .describe('<pre><code><b>*username:</b> string</code></pre>')
   }),
   response: {
     201: z.object({
@@ -329,5 +329,5 @@ export {
   deleteFolderSchema,
   editSubfolderSchema,
   deleteSubfolderSchema,
-  userPublicFoldersGetByUserIdSchema
+  userPublicFoldersGetByUsernameSchema
 };

@@ -13,7 +13,7 @@ import {
   editFolderSchema,
   editSubfolderSchema,
   userFoldersGetByUserIdSchema,
-  userPublicFoldersGetByUserIdSchema
+  userPublicFoldersGetByUsernameSchema
 } from '@/schemas/userFolderSchema';
 import {
   createFolderController,
@@ -27,7 +27,7 @@ import {
   editSubfolderController,
   getFoldersByUserIdController,
   getLinksController,
-  getPublicFoldersByUserIdController
+  getPublicFoldersByUsernameController
 } from '@/controllers/userFolderController';
 import {
   ICreateFolderBody,
@@ -49,7 +49,7 @@ import {
   IEditSubfolderBody,
   IEditSubfolderParams,
   IGetFoldersByUserIdParams,
-  IGetPublicFoldersByUserIdParams
+  IGetPublicFoldersByUsernameParams
 } from '@/interfaces/userFolderInterface';
 
 const userFolderRoute = async (fastify: FastifyInstance) => {
@@ -61,10 +61,10 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   );
 
   routeOptions.get<{
-    Params: IGetPublicFoldersByUserIdParams
-  }>('/folders/public/:userId',
-    { schema: userPublicFoldersGetByUserIdSchema },
-    getPublicFoldersByUserIdController
+    Params: IGetPublicFoldersByUsernameParams
+  }>('/folders/public/:username',
+    { schema: userPublicFoldersGetByUsernameSchema },
+    getPublicFoldersByUsernameController
   );
 
   routeOptions.get<{
