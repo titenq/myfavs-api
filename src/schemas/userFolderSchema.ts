@@ -139,7 +139,7 @@ const createLinkSubfolderSchema = {
     folderId: z.string(genMsgError('folderId', Type.STRING, Required.TRUE))
       .describe('<pre><code><b>*folderId:</b> string</code></pre>'),
     subfolderName: z.string(genMsgError('subfolderName', Type.STRING, Required.TRUE))
-    .describe('<pre><code><b>*subfolderName:</b> string</code></pre>')
+      .describe('<pre><code><b>*subfolderName:</b> string</code></pre>')
   }),
   body: z.object({
     url: z.string(genMsgError('url', Type.STRING, Required.TRUE))
@@ -154,7 +154,7 @@ const createLinkSubfolderSchema = {
   response: {
     200: z.object({
       picture: z.string(genMsgError('picture', Type.STRING, Required.TRUE))
-      .describe('<pre><code><b>*picture:</b> string</code></pre>')
+        .describe('<pre><code><b>*picture:</b> string</code></pre>')
     }),
     400: errorSchema,
     403: errorSchema,
@@ -187,7 +187,7 @@ const deleteLinkSchema = {
   }),  response: {
     200: z.object({
       picture: z.string(genMsgError('picture', Type.STRING, Required.TRUE))
-      .describe('<pre><code><b>*picture:</b> string</code></pre>')
+        .describe('<pre><code><b>*picture:</b> string</code></pre>')
     }),
     400: errorSchema,
     403: errorSchema,
