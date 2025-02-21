@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import verifyRecaptcha from '@/handlers/verifyRecaptchaHandler';
+import verifyRecaptcha from '../handlers/verifyRecaptchaHandler';
 import {
   authForgotPasswordController,
   authLoginController,
@@ -10,7 +10,7 @@ import {
   authResendLinkController,
   authResetPasswordController,
   authVerifyEmailController
-} from '@/controllers/authController';
+} from '../controllers/authController';
 import {
   authForgotPasswordSchema,
   authLoginSchema,
@@ -18,7 +18,7 @@ import {
   authResendLinkSchema,
   authResetPasswordSchema,
   authVerifyEmailSchema
-} from '@/schemas/authSchema';
+} from '../schemas/authSchema';
 import {
   IAuthForgotPasswordBody,
   IAuthForgotPasswordHeaders,
@@ -26,7 +26,7 @@ import {
   IAuthLoginHeaders,
   IAuthRegisterBody,
   IAuthRegisterHeaders
-} from '@/interfaces/authInterface';
+} from '../interfaces/authInterface';
 
 const authRoute = async (fastify: FastifyInstance) => {
   const routeOptions = fastify.withTypeProvider<ZodTypeProvider>();

@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import errorHandler from '@/helpers/errorHandler';
-import { IJwtParams, IJwtVerify } from '@/interfaces/jwtInterface';
-import createErrorMessage from '@/helpers/createErrorMessage';
+import errorHandler from '../helpers/errorHandler';
+import { IJwtParams, IJwtVerify } from '../interfaces/jwtInterface';
+import createErrorMessage from '../helpers/createErrorMessage';
 
 const verifyToken = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.params as IJwtParams;

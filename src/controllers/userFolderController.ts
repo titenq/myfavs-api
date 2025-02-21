@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 
-import errorHandler from '@/helpers/errorHandler';
-import userFolderService from '@/services/userFolderService';
-import { IGenericError } from '@/interfaces/errorInterface';
+import errorHandler from '../helpers/errorHandler';
+import userFolderService from '../services/userFolderService';
+import { IGenericError } from '../interfaces/errorInterface';
 import {
   ICreateFolderBody,
   ICreateFolderParams,
@@ -36,8 +36,8 @@ import {
   IGetFoldersByUserIdRequest,
   IGetPublicFoldersByUsernameParams,
   IUserFolderResponse
-} from '@/interfaces/userFolderInterface';
-import createErrorMessage from '@/helpers/createErrorMessage';
+} from '../interfaces/userFolderInterface';
+import createErrorMessage from '../helpers/createErrorMessage';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{

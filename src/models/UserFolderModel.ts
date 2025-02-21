@@ -1,4 +1,4 @@
-import mongoose from '@/db';
+import mongoose from '../db';
 
 const LinkSchema = new mongoose.Schema({
   url: {

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { errorSchema } from '@/schemas/sharedSchema';
+import { genMsgError, Required, Type } from '../helpers/genMsgError';
+import { errorSchema } from '../schemas/sharedSchema';
 
 const passwordSchema = () => {
   return z.string()

@@ -4,9 +4,9 @@ import fs from 'node:fs';
 import puppeteer from 'puppeteer';
 import sharp from 'sharp';
 
-import { IGenericError } from '@/interfaces/errorInterface';
-import { saveFile } from '@/helpers/bucketActions';
-import createErrorMessage from '@/helpers/createErrorMessage';
+import { IGenericError } from '../interfaces/errorInterface';
+import { saveFile } from '../helpers/bucketActions';
+import createErrorMessage from '../helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {

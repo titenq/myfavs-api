@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { errorSchema } from '@/schemas/sharedSchema';
+import { genMsgError, Required, Type } from '../helpers/genMsgError';
+import { errorSchema } from '../schemas/sharedSchema';
 
 const usersLinksSchema = z.object({
   name: z.string(genMsgError('name', Type.STRING, Required.TRUE)),

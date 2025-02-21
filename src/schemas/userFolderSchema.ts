@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { genMsgError, Required, Type } from '@/helpers/genMsgError';
-import { _idSchema, errorSchema } from '@/schemas/sharedSchema';
-import { IFolder } from '@/interfaces/userFolderInterface';
+import { genMsgError, Required, Type } from '../helpers/genMsgError';
+import { _idSchema, errorSchema } from '../schemas/sharedSchema';
+import { IFolder } from '../interfaces/userFolderInterface';
 
 const linksSchema = z.object({
   url: z.string(genMsgError('url', Type.STRING, Required.TRUE)),

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
 
-import { IGenericError } from '@/interfaces/errorInterface';
+import { IGenericError } from '../interfaces/errorInterface';
 
 const errorHandler = (
   error: Error | ZodError | IGenericError,

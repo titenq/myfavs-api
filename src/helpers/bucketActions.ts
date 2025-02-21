@@ -4,8 +4,8 @@ import 'dotenv/config';
 import { Upload } from '@aws-sdk/lib-storage';
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
-import { IGenericError } from '@/interfaces/errorInterface';
-import { ILink } from '@/interfaces/userFolderInterface';
+import { IGenericError } from '../interfaces/errorInterface';
+import { ILink } from '../interfaces/userFolderInterface';
 
 const {
   BUCKET_KEY,
