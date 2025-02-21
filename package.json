@@ -5,8 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src --format esm",
-    "start": "node dist/index.mjs"
+    "build": "npm install && tsup ./src --format esm",
+    "start": "node ./dist/index.mjs"
   },
   "author": "TitenQ <titenq@gmail.com>",
   "license": "GPL-3.0",
