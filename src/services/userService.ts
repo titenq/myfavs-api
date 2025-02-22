@@ -16,6 +16,16 @@ const userService = {
     }
   },
 
+  getUserByName: async (name: string) => {
+    try {
+      const user: IUserResponse | null = await UserModel.findOne({ name }).select('+password');
+
+      return user;
+    } catch (error) {
+      return null;
+    }
+  },
+
   getUserById: async (userId: string) => {
     try {
       const user: IUserResponse | null = await UserModel.findOne({ _id: userId }).select('+password');

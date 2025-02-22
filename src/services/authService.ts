@@ -39,6 +39,14 @@ const authService = {
         return errorMessage;
       }
 
+      const nameExists = await userService.getUserByName(user.name);
+
+      if (nameExists) {
+        const errorMessage = createErrorMessage('nome já cadastrado', 409);
+
+        return errorMessage;
+      }
+
       const userCreated: IUserResponse = await UserModel.create(user);
 
       await userFolderService.createFolderRoot({ userId: userCreated._id.toString() });
