@@ -57,9 +57,6 @@ export const getFoldersByUserIdController = async (
     const decodedToken = request.server.jwt.verify<IJwtVerify>(token);
     const loggedUserId = decodedToken._id;
 
-    console.log({ userId });
-    console.log({ loggedUserId });
-
     if (userId !== loggedUserId) {
       return createErrorMessage('não autorizado', 403);
     }
