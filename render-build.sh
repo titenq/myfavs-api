@@ -22,5 +22,5 @@ if [[ ! -d $PUPPETEER_CACHE_DIR ]]; then
   cp -R /opt/render/.cache/puppeteer/chrome/ $PUPPETEER_CACHE_DIR
 else
   echo "...Storing Puppeteer Cache in Build Cache"
-  cp -R $PUPPETEER_CACHE_DIR /opt/render/project/src/.cache/puppeteer/chrome/
+  cp -R $PUPPETEER_CACHE_DIR /opt/render/.cache/puppeteer/chrome/
 fi
