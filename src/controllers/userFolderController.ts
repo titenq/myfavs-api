@@ -38,7 +38,6 @@ import {
   IUserFolderResponse
 } from '../interfaces/userFolderInterface';
 import createErrorMessage from '../helpers/createErrorMessage';
-import { IJwtVerify } from '../interfaces/jwtInterface';
 
 export const getFoldersByUserIdController = async (
   request: FastifyRequest<{
@@ -48,17 +47,6 @@ export const getFoldersByUserIdController = async (
 ) => {
   try {
     const { userId } = request.params;
-    const token = request.cookies.token;
-
-    if (!token) {
-      return createErrorMessage('não autorizado', 403);
-    }
-
-    const decodedToken: IJwtVerify = request.server.jwt.verify<IJwtVerify>(token);
-
-    if (decodedToken._id !== userId) {
-      return createErrorMessage('não autorizado', 403);
-    }
 
     const getFoldersByUserIdRequest: IGetFoldersByUserIdRequest = {
       userId
@@ -78,8 +66,8 @@ export const getFoldersByUserIdController = async (
 
     errorHandler(errorMessage, request, reply);
   }
-
 };
+
 export const createFolderController = async (
   request: FastifyRequest<{
     Params: ICreateFolderParams,
