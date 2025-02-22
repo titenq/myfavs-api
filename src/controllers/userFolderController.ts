@@ -49,11 +49,16 @@ export const getFoldersByUserIdController = async (
     const { userId } = request.params;
     const cookiesUser = request.cookies?.user;
 
+    console.log({ userId });
+    console.log({ cookiesUser });
+
     if (!cookiesUser) {
       return createErrorMessage('não autorizado', 403);
     }
 
     const loggedUserId = JSON.parse(cookiesUser)._id;
+
+    console.log({ loggedUserId });
 
     if (userId !== loggedUserId) {
       return createErrorMessage('não autorizado', 403);
