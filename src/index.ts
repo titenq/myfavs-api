@@ -34,11 +34,12 @@ app.register(fastifyHelmet, {
 });
 
 app.register(fastifyCors, {
-  origin: siteOrigin,
+  origin: ['http://localhost:5173', 'https://myfavs.vercel.app'],
   credentials: true,
   allowedHeaders: [
     'Content-Type',
     'Authorization',
+    'Cookie',
     'Access-Control-Allow-Origin',
     'X-Recaptcha-Token'
   ],
