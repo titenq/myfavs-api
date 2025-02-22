@@ -41,7 +41,14 @@ app.register(fastifyCors, {
 });
 
 app.register(cookie, {
-  secret: COOKIE_SECRET!
+  secret: COOKIE_SECRET!,
+  hook: 'onRequest',
+  parseOptions: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    path: '/'
+  }
 });
 
 app.register(jwt, {
