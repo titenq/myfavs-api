@@ -18,7 +18,7 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
         '--disable-dev-shm-usage'
       ],
       executablePath: process.env.NODE_ENV === 'PROD'
-        ? '/opt/render/project/src/.chrome/chrome'
+        ? '/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome-linux64/chrome'
         : puppeteer.executablePath()
     });
     console.log('Browser launched successfully');
