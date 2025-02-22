@@ -25,6 +25,8 @@ const verifyToken = async (request: FastifyRequest, reply: FastifyReply) => {
 
     return reply.send();
   }
+
+  return true;
 };
 
 export default verifyToken;
