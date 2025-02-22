@@ -2,11 +2,11 @@
   "name": "myfavs-api",
   "version": "1.0.0",
   "description": "API do projeto myfavs",
-  "main": "dist/index.mjs",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src --format esm --out-dir dist",
-    "start": "node dist/index.mjs"
+    "build": "npx tsc --project tsconfig.json",
+    "start": "node dist/index.js"
   },
   "author": "TitenQ <titenq@gmail.com>",
   "license": "GPL-3.0",
@@ -38,7 +38,6 @@
   "devDependencies": {
     "@types/node": "^22.13.1",
     "@types/nodemailer": "^6.4.17",
-    "tsup": "^8.3.6",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
