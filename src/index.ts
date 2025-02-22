@@ -26,7 +26,12 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.setErrorHandler(errorHandler);
 
-app.register(fastifyHelmet);
+app.register(fastifyHelmet, {
+  crossOriginResourcePolicy: {
+    policy: 'cross-origin'
+  },
+  crossOriginEmbedderPolicy: false
+});
 
 app.register(fastifyCors, {
   origin: siteOrigin,
