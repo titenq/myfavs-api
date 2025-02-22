@@ -11,6 +11,7 @@ npm run build
 #Ensure the Puppeteer cache directory exists
 PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer
 mkdir -p $PUPPETEER_CACHE_DIR
+mkdir -p /opt/render/project/src/.cache/puppeteer/chrome
 
 # Install Puppeteer and download Chrome
 npx puppeteer browsers install chrome
