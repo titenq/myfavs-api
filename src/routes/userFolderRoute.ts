@@ -70,10 +70,7 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
   routeOptions.get<{
     Params: IGetFoldersByUserIdParams
   }>('/folders/:userId',
-    {
-      schema: userFoldersGetByUserIdSchema,
-      preHandler: [verifyToken]
-    },
+    { schema: userFoldersGetByUserIdSchema},
     getFoldersByUserIdController
   );
 
@@ -81,7 +78,10 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
     Params: ICreateFolderParams,
     Body: ICreateFolderBody,
   }>('/folders/:userId',
-    { schema: createFolderSchema },
+    {
+      schema: userFoldersGetByUserIdSchema,
+      preHandler: [verifyToken]
+    },
     createFolderController
   );
 
