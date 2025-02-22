@@ -49,6 +49,7 @@ export const getFoldersByUserIdController = async (
     const { userId } = request.params;
     const cookiesUser = request.cookies?.user;
 
+    console.log({ request });
     console.log({ userId });
     console.log({ cookiesUser });
 
