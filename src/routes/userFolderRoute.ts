@@ -81,10 +81,7 @@ const userFolderRoute = async (fastify: FastifyInstance) => {
     Params: ICreateFolderParams,
     Body: ICreateFolderBody,
   }>('/folders/:userId',
-    {
-      schema: createFolderSchema,
-      preHandler: [verifyToken]
-    },
+    { schema: createFolderSchema },
     createFolderController
   );
 
