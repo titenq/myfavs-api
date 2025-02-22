@@ -32,6 +32,7 @@ const userFolderService = {
   getFoldersByUserId: async (getFoldersByUserId: IGetFoldersByUserIdParams): Promise<IUserFolderResponse | IGenericError> => {
     try {
       const { userId } = getFoldersByUserId;
+
       const response: IUserFolderResponse | null = await UserFolderModel.findOne({ userId });
 
       if (response && response.folders) {
