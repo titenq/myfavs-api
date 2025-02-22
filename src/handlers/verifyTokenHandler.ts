@@ -8,8 +8,6 @@ const verifyToken = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.params as IJwtParams;
   const token = request.cookies.token;
 
-  await new Promise(resolve => setTimeout(resolve, 200));
-
   if (!token) {
     const errorMessage = createErrorMessage('não autorizado', 403);
 
