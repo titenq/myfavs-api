@@ -73,7 +73,7 @@ const startServer = async () => {
   await indexRoute(app);
 
   await app.listen({
-    port: Number(PORT),
+    port: Number(PORT) || 3300,
     host: '0.0.0.0'
   });
 };

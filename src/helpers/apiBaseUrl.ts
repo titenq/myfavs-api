@@ -5,7 +5,7 @@ const { NODE_ENV, PORT } = process.env;
 let apiBaseUrl: string;
 
 if (NODE_ENV === 'DEV') {
-  apiBaseUrl = `http://localhost:${PORT}`;
+  apiBaseUrl = `http://localhost:${PORT || '3300'}`;
 } else {
   apiBaseUrl = 'https://myfavs-api.onrender.com';
 }
