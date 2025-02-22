@@ -10,7 +10,6 @@ import createErrorMessage from '../helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {
-    console.log('Starting Puppeteer launch...');
     const browser = await puppeteer.launch({
       args: [
         '--no-sandbox',
@@ -18,13 +17,10 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
         '--disable-dev-shm-usage'
       ]
     });
-    console.log('Browser launched successfully');
 
     const page = await browser.newPage();
-    console.log('New page created');
 
     await page.goto(url);
-    console.log('Navigated to URL:', url);
 
     const uploadsDir = path.join(process.cwd(), 'uploads/pictures');
 
@@ -77,7 +73,6 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
 
     return fileLocation;
   } catch (error) {
-    console.error('Screenshot error:', error);
     let errorMessage = createErrorMessage('erro ao criar screenshot');
 
     if (error instanceof Error && error.message.includes('ERR_NAME_NOT_RESOLVED')) {
