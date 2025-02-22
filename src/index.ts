@@ -49,7 +49,7 @@ app.register(cookie, {
   secret: COOKIE_SECRET!,
   hook: 'onRequest',
   parseOptions: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'PROD',
     httpOnly: true,
     sameSite: 'none',
     path: '/'
