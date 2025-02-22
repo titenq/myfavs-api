@@ -10,7 +10,14 @@ import createErrorMessage from '../helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage'
+      ]
+    });
+    
     const page = await browser.newPage();
 
     await page.goto(url);
