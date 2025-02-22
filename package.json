@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npx tsc-alias",
     "start": "node dist/index.js"
   },
   "author": "TitenQ <titenq@gmail.com>",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/node": "^22.13.1",
     "@types/nodemailer": "^6.4.17",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
