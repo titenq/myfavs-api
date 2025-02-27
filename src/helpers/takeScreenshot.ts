@@ -73,6 +73,7 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
 
     return fileLocation;
   } catch (error) {
+    console.error(error);
     let errorMessage = createErrorMessage('erro ao criar screenshot');
 
     if (error instanceof Error && error.message.includes('ERR_NAME_NOT_RESOLVED')) {
