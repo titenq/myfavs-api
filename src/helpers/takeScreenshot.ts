@@ -32,7 +32,7 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
     const filepath = path.join(uploadsDir, filename);
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    await delay(1000);
+    await delay(500);
 
     await page.setViewport({
       width: 1024,
