@@ -42,7 +42,7 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
     const tempPath = `${filepath}-temp.jpg`;
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    await delay(500);
+    await delay(1000);
 
     await page.screenshot({
       path: tempPath,
