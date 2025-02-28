@@ -9,60 +9,57 @@ import { saveFile } from '../helpers/bucketActions';
 import createErrorMessage from '../helpers/createErrorMessage';
 
 const takeScreenshot = async (url: string, linkId: string): Promise<string | IGenericError> => {
-  let browser;
   try {
-    browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--single-process'
+        '--disable-dev-shm-usage'
       ]
     });
 
     const page = await browser.newPage();
 
-    page.setDefaultNavigationTimeout(60000);
-
-    await page.setRequestInterception(true);
-    page.on('request', (req) => {
-      if (['image', 'stylesheet', 'font'].includes(req.resourceType())) {
-        req.abort();
-      } else {
-        req.continue();
-      }
-    });
-
-    const response = await page.goto(url, {
-      waitUntil: 'networkidle0',
+    await page.goto(url, {
+      waitUntil: 'domcontentloaded',
       timeout: 60000
     });
 
-    if (!response || response.status() >= 400) {
-      throw new Error(`Erro HTTP: ${response?.status() || 'Sem resposta'}`);
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    await page.setViewport({ width: 1024, height: 768 });
-
     const uploadsDir = path.join(process.cwd(), 'uploads/pictures');
+
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
     const filename = `${linkId}-${Date.now()}.jpg`;
     const filepath = path.join(uploadsDir, filename);
+
+    await page.setViewport({
+      width: 1024,
+      height: 768
+    });
+
     const tempPath = `${filepath}-temp.jpg`;
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    await delay(500);
 
     await page.screenshot({
       path: tempPath,
       fullPage: false,
-      clip: { x: 0, y: 0, width: 1024, height: 768 }
+      clip: {
+        x: 0,
+        y: 0,
+        width: 1024,
+        height: 768
+      }
     });
 
     await sharp(tempPath)
-      .resize(280, 210, { fit: 'contain', background: { r: 255, g: 255, b: 255 } })
+      .resize(280, 210, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255 }
+      })
       .jpeg({ quality: 60 })
       .toFile(filepath);
 
@@ -75,19 +72,18 @@ const takeScreenshot = async (url: string, linkId: string): Promise<string | IGe
     fs.unlinkSync(tempPath);
     fs.unlinkSync(filepath);
 
+    await browser.close();
+
     return fileLocation;
   } catch (error) {
-    console.error('Erro no takeScreenshot:', error);
+    console.error(error);
+    let errorMessage = createErrorMessage('erro ao criar screenshot');
 
     if (error instanceof Error && error.message.includes('ERR_NAME_NOT_RESOLVED')) {
-      return createErrorMessage('URL não encontrada', 404);
+      errorMessage = createErrorMessage('url não encontrada', 404);
     }
 
-    return createErrorMessage('Erro ao criar screenshot');
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
+    return errorMessage;
   }
 };
 
